@@ -38,6 +38,7 @@ import butter.droid.base.providers.media.models.Media;
  */
 public abstract class MediaProvider extends BaseProvider implements Parcelable {
     public static final String MEDIA_CALL = "media_http_call";
+    public static final int DEFAULT_NAVIGATION_INDEX = 1;
 
     /**
      * Get a list of Media items from the provider

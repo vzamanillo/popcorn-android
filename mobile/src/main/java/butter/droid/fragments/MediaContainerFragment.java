@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.ButterKnife;
-import butterknife.Bind;
 import butter.droid.R;
 import butter.droid.activities.MainActivity;
 import butter.droid.adapters.MediaPagerAdapter;
 import butter.droid.base.providers.media.MediaProvider;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Fragment that contains a viewpager tabs for {@link butter.droid.fragments.MediaListFragment}
@@ -64,7 +64,7 @@ public class MediaContainerFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        mSelection = mProvider.getDefaultNavigationIndex();
+        mSelection = MediaProvider.DEFAULT_NAVIGATION_INDEX;
     }
 
     @Override
