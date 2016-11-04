@@ -42,7 +42,6 @@ import butter.droid.base.providers.subs.SubsProvider;
 public abstract class BaseProvider {
 
     protected Gson mGson = new Gson();
-    private Call mCurrentCall;
 
     private OkHttpClient getClient() {
         return ButterApplication.getHttpClient();
@@ -66,7 +65,7 @@ public abstract class BaseProvider {
      * @return Call
      */
     protected Call enqueue(Request request, com.squareup.okhttp.Callback requestCallback) {
-        mCurrentCall = getClient().newCall(request);
+        Call mCurrentCall = getClient().newCall(request);
         if (requestCallback != null) mCurrentCall.enqueue(requestCallback);
         return mCurrentCall;
     }
