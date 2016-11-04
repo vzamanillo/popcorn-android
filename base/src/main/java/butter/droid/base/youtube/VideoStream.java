@@ -38,10 +38,8 @@ public class VideoStream {
         Map<String, String> argMap = new HashMap<>();
         for (String arg : args) {
             String[] argsValues = arg.split("=");
-            if (argsValues != null) {
-                if (argsValues.length >= 2) {
-                    argMap.put(argsValues[0], argsValues[1]);
-                }
+            if (argsValues.length >= 2) {
+                argMap.put(argsValues[0], argsValues[1]);
             }
         }
         mUrl = argMap.get("url");
