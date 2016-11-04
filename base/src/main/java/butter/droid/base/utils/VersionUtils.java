@@ -49,10 +49,9 @@ public class VersionUtils {
 
     public static boolean isUsingCorrectBuild() {
         String buildAbi = getBuildAbi();
-        if(BuildConfig.GIT_BRANCH.equalsIgnoreCase("local"))
-            return true;
+        return BuildConfig.GIT_BRANCH.equalsIgnoreCase("local") ||
+                SupportedArchitectures.getAbi().equalsIgnoreCase(buildAbi);
 
-        return SupportedArchitectures.getAbi().equalsIgnoreCase(buildAbi);
     }
 
     private static String getBuildAbi() {
