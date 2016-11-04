@@ -83,7 +83,7 @@ public class TVProvider extends MediaProvider {
             params.add(new NameValuePair("order", "-1"));
         }
 
-        String sort = "";
+        String sort;
         switch (filters.sort) {
             default:
             case POPULARITY:
@@ -159,7 +159,7 @@ public class TVProvider extends MediaProvider {
                     if (response.isSuccessful()) {
                         String responseStr = response.body().string();
 
-                        ArrayList<LinkedTreeMap<String, Object>> list = null;
+                        ArrayList<LinkedTreeMap<String, Object>> list;
                         if (responseStr.isEmpty()) {
                             list = new ArrayList<>();
                         } else {
