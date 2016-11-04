@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import timber.log.Timber;
+
 
 /**
  * This class represents W3C's TTML DFXP .XML subtitle format
@@ -466,7 +468,7 @@ public class FormatTTML extends TimedTextFileFormat {
                 f = Float.parseFloat(parts[3]);
                 mSeconds = h * 3600000 + m * 60000 + s * 1000 + (int) (f * 1000 / frameRate);
             } else {
-                //unrecognized  clock time format
+                Timber.w("Unrecognized clock time format");
             }
 
         } else {
@@ -509,11 +511,8 @@ public class FormatTTML extends TimedTextFileFormat {
                         tickRate = Integer.parseInt(s);
                         mSeconds = (int) (time * 1000 / tickRate);
                     }
-
-
                 } else {
-                    //invalid metric
-
+                    Timber.w("Imvalid metric");
                 }
             } catch (NumberFormatException e) {
                 //incorrect format for offset time
