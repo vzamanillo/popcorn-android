@@ -128,6 +128,6 @@ public class FileSelectorDialogFragment extends DialogFragment {
     }
 
     public interface Listener {
-        public void onFileSelected(File f);
+        void onFileSelected(File f);
     }
 }

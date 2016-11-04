@@ -373,6 +373,6 @@ public class TorrentService extends Service implements TorrentListener {
                 stopForeground();
             }
         }
-    };
+    }
 
 }

@@ -54,7 +54,7 @@ public abstract class MetaProvider extends BaseProvider {
     }
 
     public interface Callback {
-        public void onResult(MetaData metaData, Exception e);
+        void onResult(MetaData metaData, Exception e);
     }
 
     public void getMovieMeta(String imdbId, Callback callback) {

@@ -28,7 +28,6 @@ import com.github.sv244.torrentstream.listeners.TorrentListener;
 
 import java.util.Map;
 
-import hugo.weaving.DebugLog;
 import butter.droid.base.R;
 import butter.droid.base.activities.TorrentActivity;
 import butter.droid.base.beaming.server.BeamServer;
@@ -44,6 +43,7 @@ import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.torrent.TorrentService;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.ThreadUtils;
+import hugo.weaving.DebugLog;
 
 
 /**
@@ -86,7 +86,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     private String mSubtitleLanguage = null, mVideoLocation = "";
 
     public enum State {
-        UNINITIALISED, WAITING_TORRENT, WAITING_SUBTITLES, BUFFERING, STREAMING, ERROR;
+        UNINITIALISED, WAITING_TORRENT, WAITING_SUBTITLES, BUFFERING, STREAMING, ERROR
     }
 
     @Override

@@ -30,10 +30,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import ht.vpn.android.api.IOpenVPNAPIService;
-import ht.vpn.android.api.IOpenVPNStatusCallback;
+
 import butter.droid.base.utils.PackageUtils;
 import butter.droid.base.utils.ThreadUtils;
+import ht.vpn.android.api.IOpenVPNAPIService;
+import ht.vpn.android.api.IOpenVPNStatusCallback;
 
 public class VPNManager {
 
@@ -237,8 +238,8 @@ public class VPNManager {
     }
 
     public interface Listener {
-        public void onVPNServiceReady();
-        public void onVPNStatusUpdate(State state, String message);
+        void onVPNServiceReady();
+        void onVPNStatusUpdate(State state, String message);
     }
 
 }

@@ -270,7 +270,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, (Integer) item.getValue(), 10, 60, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, item.getValue(), 10, 60, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
@@ -295,7 +295,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), null, SelectionMode.COLOR, (Integer) item.getValue(), 0, 0, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), null, SelectionMode.COLOR, item.getValue(), 0, 0, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
@@ -320,7 +320,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, (Integer) item.getValue(), 0, 5, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, item.getValue(), 0, 5, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
@@ -395,7 +395,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, (Integer) item.getValue(), 0, 200, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, item.getValue(), 0, 200, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
@@ -421,7 +421,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, (Integer) item.getValue(), 0, 3000, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, item.getValue(), 0, 3000, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
@@ -451,7 +451,7 @@ public interface PreferencesHandler {
                     .setOnClickListener(new PrefItem.OnClickListener() {
                         @Override
                         public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, (Integer) item.getValue(), 0, 3000, new OnSelectionListener() {
+                            handler.openListSelection(item.getTitle(), items, SelectionMode.NUMBER, item.getValue(), 0, 3000, new OnSelectionListener() {
                                 @Override
                                 public void onSelection(int position, Object value) {
                                     item.saveValue(value);
