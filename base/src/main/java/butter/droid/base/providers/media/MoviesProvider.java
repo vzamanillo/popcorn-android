@@ -19,7 +19,6 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 
-import butter.droid.base.utils.LocaleUtils;
 import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;

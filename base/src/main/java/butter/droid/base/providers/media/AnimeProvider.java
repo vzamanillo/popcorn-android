@@ -19,8 +19,6 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 import android.annotation.SuppressLint;
-import android.text.Html;
-import android.util.Log;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.okhttp.Call;
@@ -30,14 +28,9 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
@@ -47,10 +40,6 @@ import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
 import butter.droid.base.providers.media.models.Show;
-import butter.droid.base.providers.meta.MetaProvider;
-import butter.droid.base.providers.meta.TraktProvider;
-import butter.droid.base.providers.subs.OpenSubsProvider;
-import butter.droid.base.providers.subs.SubsProvider;
 import timber.log.Timber;
 
 @SuppressLint("ParcelCreator")
