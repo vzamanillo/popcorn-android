@@ -18,9 +18,10 @@
 package butter.droid.base.utils;
 
 import android.content.Context;
-import android.content.res.Configuration;
 
 import java.util.Locale;
+
+import butter.droid.base.compat.Locales;
 
 public class LocaleUtils {
 
@@ -29,11 +30,7 @@ public class LocaleUtils {
     }
 
     public static void setCurrent(Context context, Locale locale) {
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-
-        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+        Locales.setLocale(context, locale);
     }
 
     public static Locale getCurrent() {
