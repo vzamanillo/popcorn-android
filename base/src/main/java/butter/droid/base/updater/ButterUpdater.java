@@ -242,6 +242,7 @@ public class ButterUpdater extends Observable {
 
         @Override
         public void onResponse(Response response) {
+            String status = STATUS_NO_UPDATE;
             try {
                 if (response.isSuccessful()) {
                     UpdaterData data = mGson.fromJson(response.body().string(), UpdaterData.class);
@@ -258,18 +259,17 @@ public class ButterUpdater extends Observable {
                     }
 
                     ApplicationInfo appinfo = mContext.getApplicationInfo();
-                    if ((channel == null || channel.checksum.equals(SHA1(appinfo.sourceDir)) || channel.versionCode <= mVersionCode) && VersionUtils.isUsingCorrectBuild()) {
-                        setChanged();
-                        notifyObservers(STATUS_NO_UPDATE);
-                    } else {
-                        downloadFile(channel.updateUrl);
-                        setChanged();
-                        notifyObservers(STATUS_GOT_UPDATE);
+                    if (channel != null) {
+                        if ((!channel.checksum.equals(SHA1(appinfo.sourceDir)) || channel.versionCode <= mVersionCode) || !VersionUtils.isUsingCorrectBuild()){
+                            status = STATUS_GOT_UPDATE;
+                            downloadFile(channel.updateUrl);
+                        }
                     }
-                } else {
-                    setChanged();
-                    notifyObservers(STATUS_NO_UPDATE);
                 }
+
+                setChanged();
+                notifyObservers(status);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
