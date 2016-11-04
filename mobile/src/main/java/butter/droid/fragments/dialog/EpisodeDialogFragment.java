@@ -277,7 +277,7 @@ public class EpisodeDialogFragment extends DialogFragment {
             mSubsProvider.getList(mEpisode, new SubsProvider.Callback() {
                 @Override
                 public void onSuccess(Map<String, String> subtitles) {
-                    if (!FragmentUtil.isAdded(EpisodeDialogFragment.this)) return;
+                    if (FragmentUtil.isNotAdded(EpisodeDialogFragment.this)) return;
 
                     mEpisode.subtitles = subtitles;
 

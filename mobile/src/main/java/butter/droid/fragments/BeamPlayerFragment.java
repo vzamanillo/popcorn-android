@@ -374,7 +374,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
     private MediaControl.PlayStateListener mPlayStateListener = new MediaControl.PlayStateListener() {
         @Override
         public void onSuccess(MediaControl.PlayStateStatus state) {
-            if(!FragmentUtil.isAdded(BeamPlayerFragment.this)) {
+            if(FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
                 return;
             }
 
@@ -393,7 +393,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
 
         @Override
         public void onError(ServiceCommandError error) {
-            if(!FragmentUtil.isAdded(BeamPlayerFragment.this)) {
+            if(FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
                 return;
             }
 

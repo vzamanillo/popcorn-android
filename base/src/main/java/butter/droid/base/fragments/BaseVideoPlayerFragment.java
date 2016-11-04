@@ -896,7 +896,7 @@ public abstract class BaseVideoPlayerFragment
         public void onDeviceReady(ConnectableDevice device) {
             super.onDeviceReady(device);
 
-            if (!FragmentUtil.isAdded(BaseVideoPlayerFragment.this)){
+            if (FragmentUtil.isNotAdded(BaseVideoPlayerFragment.this)){
                 return;
             }
             

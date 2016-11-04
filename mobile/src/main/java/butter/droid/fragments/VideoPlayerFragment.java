@@ -541,7 +541,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     }
 
     public void updatePlayPauseState() {
-        if(!FragmentUtil.isAdded(this))
+        if(FragmentUtil.isNotAdded(this))
             return;
 
         if (isPlaying()) {

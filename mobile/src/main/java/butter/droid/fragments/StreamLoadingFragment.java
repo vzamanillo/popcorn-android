@@ -144,7 +144,7 @@ public class StreamLoadingFragment extends BaseStreamLoadingFragment {
     }
 
     private void updateStatus(final StreamStatus status) {
-        if (!FragmentUtil.isAdded(this)) return;
+        if (FragmentUtil.isNotAdded(this)) return;
 
         final DecimalFormat df = new DecimalFormat("#############0.00");
         ThreadUtils.runOnUiThread(new Runnable() {
@@ -221,7 +221,7 @@ public class StreamLoadingFragment extends BaseStreamLoadingFragment {
     @Override
     @DebugLog
     protected void startPlayerActivity(String location, int resumePosition) {
-        if (FragmentUtil.isAdded(this) && !mPlayerStarted) {
+        if (!FragmentUtil.isNotAdded(this) && !mPlayerStarted) {
             mStreamInfo.setVideoLocation(location);
             if (BeamManager.getInstance(mContext).isConnected()) {
                 BeamPlayerActivity.startActivity(mContext, mStreamInfo, resumePosition);
