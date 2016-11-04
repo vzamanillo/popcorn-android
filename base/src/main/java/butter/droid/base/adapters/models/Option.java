@@ -17,6 +17,8 @@
 
 package butter.droid.base.adapters.models;
 
+import android.support.annotation.NonNull;
+
 import butter.droid.base.utils.LocaleUtils;
 
 public class Option implements Comparable<Option> {
@@ -64,7 +66,7 @@ public class Option implements Comparable<Option> {
     }
 
     @Override
-    public int compareTo(Option o) {
+    public int compareTo(@NonNull Option o) {
         if (this.name != null)
             return this.name.toLowerCase(LocaleUtils.getCurrent()).compareTo(o.getName().toLowerCase(LocaleUtils.getCurrent()));
         else

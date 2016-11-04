@@ -18,6 +18,7 @@
 package butter.droid.base.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +27,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import butter.droid.base.adapters.models.Option;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butter.droid.base.adapters.models.Option;
 
 public class FileArrayAdapter extends ArrayAdapter<Option> {
 
@@ -47,8 +48,9 @@ public class FileArrayAdapter extends ArrayAdapter<Option> {
         return mItems.get(i);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(id, null);

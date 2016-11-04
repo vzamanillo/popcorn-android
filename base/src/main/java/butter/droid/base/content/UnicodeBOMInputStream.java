@@ -27,6 +27,8 @@
  */
 package butter.droid.base.content;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
@@ -242,7 +244,7 @@ public class UnicodeBOMInputStream extends InputStream {
     /**
      * {@inheritDoc}
      */
-    public int read(final byte b[]) throws IOException,
+    public int read(@NonNull final byte b[]) throws IOException,
             NullPointerException {
         return in.read(b, 0, b.length);
     }
@@ -250,7 +252,7 @@ public class UnicodeBOMInputStream extends InputStream {
     /**
      * {@inheritDoc}
      */
-    public int read(final byte b[],
+    public int read(@NonNull final byte b[],
                     final int off,
                     final int len) throws IOException,
             NullPointerException {
