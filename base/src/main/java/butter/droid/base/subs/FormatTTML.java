@@ -360,8 +360,9 @@ public class FormatTTML extends TimedTextFileFormat {
     /**
      * Identifies the color expression and obtains the RGBA equivalent value.
      *
-     * @param color
-     * @return
+     * @param color The color to parse
+     * @param tto The timed text object
+     * @return The color
      */
     private String parseColor(String color, TimedTextObject tto) {
         String value = "";
@@ -422,11 +423,13 @@ public class FormatTTML extends TimedTextFileFormat {
     }
 
 
-    /**
+     /**
      * returns the number of milliseconds equivalent to this time expression
      *
-     * @param timeExpression
-     * @return
+     * @param timeExpression The time expression
+     * @param tto The timed text object
+     * @param doc The document
+     * @return Parsed time expression
      */
     private int parseTimeExpression(String timeExpression, TimedTextObject tto, Document doc) {
         int mSeconds = 0;

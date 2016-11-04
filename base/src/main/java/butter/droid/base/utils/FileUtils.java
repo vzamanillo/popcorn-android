@@ -209,7 +209,7 @@ public class FileUtils {
      *
      * @param string {@link String}
      * @param path   Path of the file
-     * @param string Encoding
+     * @param encoding Encoding
      * @throws IOException
      */
     public static void saveStringToFile(String string, File path, String encoding) throws IOException {

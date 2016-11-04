@@ -33,8 +33,8 @@ public class Style {
     /**
      * Constructor that receives a String with the new styleName and a style to copy
      *
-     * @param styleName
-     * @param style
+     * @param styleName Style name
+     * @param style Style object
      */
     protected Style(String styleName, Style style) {
         this.iD = styleName;
@@ -71,7 +71,6 @@ public class Style {
      *
      * @param format supported: "name", "&HBBGGRR", "&HAABBGGRR", "decimalCodedBBGGRR", "decimalCodedAABBGGRR"
      * @param value  RRGGBBAA string
-     * @return
      */
     protected static String getRGBValue(String format, String value) {
         String color = null;

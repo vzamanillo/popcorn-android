@@ -149,7 +149,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     /**
      * Update the view based on a state.
      *
-     * @param state
+     * @param state View state
      * @param extra - an optional extra piece of data relating to the state, such as an error message, or status data
      */
     protected abstract void updateView(State state, Object extra);
@@ -157,8 +157,8 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     /**
      * Start the internal player for a streaming torrent
      *
-     * @param location
-     * @param resumePosition
+     * @param location Location
+     * @param resumePosition Resume position
      */
     protected abstract void startPlayerActivity(String location, int resumePosition);
 
@@ -276,7 +276,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     /**
      * Called when torrent buffering has reached 100%
      *
-     * @param torrent
+     * @param torrent The torrent file
      */
     @Override
     @DebugLog
@@ -288,7 +288,8 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     /**
      * Called when the torrent buffering status has been updated
      *
-     * @param status
+     * @param torrent The torrent
+     * @param status Stream status
      */
     @Override
     @DebugLog

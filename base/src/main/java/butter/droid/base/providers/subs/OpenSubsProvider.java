@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import butter.droid.base.providers.media.models.Episode;
+import butter.droid.base.providers.media.models.Movie;
 import de.timroes.axmlrpc.XMLRPCCallback;
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
 import de.timroes.axmlrpc.XMLRPCServerException;
-import butter.droid.base.providers.media.models.Episode;
-import butter.droid.base.providers.media.models.Movie;
 
 public class OpenSubsProvider extends SubsProvider {
 
@@ -135,7 +135,7 @@ public class OpenSubsProvider extends SubsProvider {
     /**
      * Login to server and get token
      *
-     * @return Token
+     * @param callback XML RPC callback
      */
     private void login(XMLRPCCallback callback) {
         try {
@@ -148,11 +148,10 @@ public class OpenSubsProvider extends SubsProvider {
     }
 
     /**
-     * Search for subtitles by imdbId, season and episode
      *
      * @param episode Episode
-     * @param token   Login token
-     * @return SRT URL
+     * @param token Login token
+     * @param callback  XML RPC callback callback
      */
     private void search(Episode episode, String token, XMLRPCCallback callback) {
         try {
