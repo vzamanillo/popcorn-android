@@ -89,8 +89,8 @@ public abstract class BaseVideoPlayerFragment
 
     private LibVLC mLibVLC;
     private MediaPlayer mMediaPlayer;
-    private Long mResumePosition = 0l;
-    private Long mDuration = 0l;
+    private Long mResumePosition = 1L;
+    private Long mDuration = 1L;
 
     private static final int SURFACE_BEST_FIT = 0;
     private static final int SURFACE_FIT_HORIZONTAL = 1;

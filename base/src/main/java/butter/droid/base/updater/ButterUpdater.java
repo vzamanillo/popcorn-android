@@ -111,12 +111,12 @@ public class ButterUpdater extends Observable {
             e.printStackTrace();
         }
 
-        lastUpdate = PrefUtils.get(mContext, LAST_UPDATE_KEY, 0l);
+        lastUpdate = PrefUtils.get(mContext, LAST_UPDATE_KEY, 1L);
         NOTIFICATION_ID += crc32(mPackageName);
 
         ApplicationInfo appinfo = context.getApplicationInfo();
 
-        if (new File(appinfo.sourceDir).lastModified() > PrefUtils.get(mContext, SHA1_TIME, 0l)) {
+        if (new File(appinfo.sourceDir).lastModified() > PrefUtils.get(mContext, SHA1_TIME, 1L)) {
             PrefUtils.save(mContext, SHA1_KEY, SHA1(appinfo.sourceDir));
             PrefUtils.save(mContext, SHA1_TIME, System.currentTimeMillis());
 
