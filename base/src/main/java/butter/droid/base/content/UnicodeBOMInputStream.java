@@ -222,16 +222,14 @@ public class UnicodeBOMInputStream extends InputStream {
      * Skips the <code>BOM</code> that was found in the wrapped
      * <code>InputStream</code> object.
      *
-     * @return this <code>UnicodeBOMInputStream</code>.
      * @throws IOException when trying to skip the BOM from the wrapped
      *                     <code>InputStream</code> object.
      */
-    public final synchronized UnicodeBOMInputStream skipBOM() throws IOException {
+    public final synchronized void skipBOM() throws IOException {
         if (!skipped) {
             in.skip(bom.bytes.length);
             skipped = true;
         }
-        return this;
     }
 
     /**

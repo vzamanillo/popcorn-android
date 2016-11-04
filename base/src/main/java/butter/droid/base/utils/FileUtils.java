@@ -93,16 +93,15 @@ public class FileUtils {
      *
      * @param file Location
      */
-    public static boolean recursiveDelete(File file) {
+    public static void recursiveDelete(File file) {
         if (file.isDirectory()) {
             String[] children = file.list();
-            if (children == null) return false;
-            for (String child : children) {
-                recursiveDelete(new File(file, child));
+            if (children != null){
+                for (String child : children) {
+                    recursiveDelete(new File(file, child));
+                }
             }
         }
-
-        return file.delete();
     }
 
     /**
