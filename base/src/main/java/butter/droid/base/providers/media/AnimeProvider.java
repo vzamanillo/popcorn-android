@@ -149,7 +149,7 @@ public class AnimeProvider extends MediaProvider {
                     if (response.isSuccessful()) {
                         String responseStr = response.body().string();
 
-                        ArrayList<LinkedTreeMap<String, Object>> list = null;
+                        ArrayList<LinkedTreeMap<String, Object>> list;
                         if (responseStr.isEmpty()) {
                             list = new ArrayList<>();
                         } else {
