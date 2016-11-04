@@ -382,8 +382,7 @@ public class AnimeProvider extends MediaProvider {
             for (LinkedTreeMap<String, Object> item : showsList) {
                 Media media = null;
                 if (item.get("type").toString().equalsIgnoreCase("movie")) {
-                    Movie movie = new Movie(null, null);
-                    media = movie;
+                    media = new Movie(null, null);
                     /*
                      * Chris Alderson:
                      * As of version 2.2.0 of the Anime API there are no movies in the database.

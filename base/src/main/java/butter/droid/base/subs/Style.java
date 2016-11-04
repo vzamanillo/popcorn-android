@@ -137,18 +137,16 @@ public class Style {
             }
         } else if (format.equalsIgnoreCase("&HBBGGRR")) {
             //hex format from SSA
-            String sb = value.substring(6) +
+            color = value.substring(6) +
                     value.substring(4, 5) +
                     value.substring(2, 3) +
                     "ff";
-            color = sb;
         } else if (format.equalsIgnoreCase("&HAABBGGRR")) {
             //hex format from ASS
-            String sb = value.substring(8) +
+            color = value.substring(8) +
                     value.substring(6, 7) +
                     value.substring(4, 5) +
                     value.substring(2, 3);
-            color = sb;
         } else if (format.equalsIgnoreCase("decimalCodedBBGGRR")) {
             //normal format from SSA
             color = Integer.toHexString(Integer.parseInt(value));
