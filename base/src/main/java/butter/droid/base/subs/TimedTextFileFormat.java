@@ -54,7 +54,7 @@ public abstract class TimedTextFileFormat {
      * @return TimedTextObject representing the parsed file
      * @throws java.io.IOException when having trouble reading the file from the given path
      */
-    protected abstract TimedTextObject parseFile(String fileName, String[] inputString) throws IOException, FatalParsingException;
+    protected abstract TimedTextObject parseFile(String fileName, String[] inputString) throws FatalParsingException;
 
     public TimedTextObject parseFile(String fileName, String inputString) throws IOException, FatalParsingException {
         return parseFile(fileName, inputString.split("\n|\r\n"));

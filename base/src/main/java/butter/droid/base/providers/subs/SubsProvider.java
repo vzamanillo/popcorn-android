@@ -128,10 +128,6 @@ public abstract class SubsProvider extends BaseProvider {
                                     callback.onFailure(response.request(), new IOException("FatalParsingException"));
                                     failure = true;
                                 }
-                            } catch (FatalParsingException e) {
-                                e.printStackTrace();
-                                callback.onFailure(response.request(), new IOException("FatalParsingException"));
-                                failure = true;
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 callback.onFailure(response.request(), e);
@@ -166,7 +162,7 @@ public abstract class SubsProvider extends BaseProvider {
      * @throws IOException
      * @throws FatalParsingException
      */
-    private static void unpack(InputStream is, File srtPath, String languageCode) throws IOException, FatalParsingException {
+    private static void unpack(InputStream is, File srtPath, String languageCode) throws IOException {
         String filename;
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
         ZipEntry ze;

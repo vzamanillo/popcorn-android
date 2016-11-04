@@ -6,7 +6,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
@@ -43,7 +42,7 @@ import timber.log.Timber;
 public class FormatTTML extends TimedTextFileFormat {
 
 
-    public TimedTextObject parseFile(String fileName, String[] inputString) throws IOException, FatalParsingException {
+    public TimedTextObject parseFile(String fileName, String[] inputString) throws FatalParsingException {
 
         TimedTextObject tto = new TimedTextObject();
         tto.fileName = fileName;

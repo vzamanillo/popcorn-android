@@ -17,7 +17,6 @@
 
 package butter.droid.base.subs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +46,7 @@ import java.util.ArrayList;
  */
 public class FormatASS extends TimedTextFileFormat {
 
-    public TimedTextObject parseFile(String fileName, String[] inputString) throws IOException {
+    public TimedTextObject parseFile(String fileName, String[] inputString) {
 
         TimedTextObject tto = new TimedTextObject();
         tto.fileName = fileName;
