@@ -40,7 +40,6 @@ import butter.droid.base.providers.BaseProvider;
 import butter.droid.base.providers.media.models.Episode;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
-import butter.droid.base.subs.FatalParsingException;
 import butter.droid.base.subs.FormatASS;
 import butter.droid.base.subs.FormatSRT;
 import butter.droid.base.subs.TimedTextObject;
@@ -160,7 +159,6 @@ public abstract class SubsProvider extends BaseProvider {
      * @param srtPath      Path where SRT should be saved
      * @param languageCode The language code
      * @throws IOException
-     * @throws FatalParsingException
      */
     private static void unpack(InputStream is, File srtPath, String languageCode) throws IOException {
         String filename;

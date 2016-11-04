@@ -52,7 +52,6 @@ public abstract class TimedTextFileFormat {
      *
      * @param fileName String that contains the path to the file
      * @return TimedTextObject representing the parsed file
-     * @throws java.io.IOException when having trouble reading the file from the given path
      */
     protected abstract TimedTextObject parseFile(String fileName, String[] inputString) throws FatalParsingException;
 
