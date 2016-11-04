@@ -21,6 +21,7 @@ import java.util.Map;
 import butter.droid.base.BuildConfig;
 import butter.droid.base.Constants;
 import butter.droid.base.R;
+import butter.droid.base.compat.SupportedArchitectures;
 import butter.droid.base.fragments.dialog.ChangeLogDialogFragment;
 import butter.droid.base.updater.ButterUpdater;
 import butter.droid.base.utils.LocaleUtils;
@@ -745,7 +746,7 @@ public interface PreferencesHandler {
                         public String get(PrefItem item) {
                             try {
                                 PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-                                return packageInfo.versionName + " - " + Build.CPU_ABI;
+                                return packageInfo.versionName + " - " + SupportedArchitectures.getAbi();
                             } catch (PackageManager.NameNotFoundException e) {
                                 e.printStackTrace();
                             }

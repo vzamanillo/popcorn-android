@@ -26,6 +26,7 @@ import android.os.Build;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
+import butter.droid.base.compat.SupportedArchitectures;
 
 public class VersionUtils {
 
@@ -51,14 +52,7 @@ public class VersionUtils {
         if(BuildConfig.GIT_BRANCH.equalsIgnoreCase("local"))
             return true;
 
-        String deviceAbi;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            deviceAbi = Build.CPU_ABI;
-        } else {
-            deviceAbi = Build.SUPPORTED_ABIS[0];
-        }
-
-        return deviceAbi.equalsIgnoreCase(buildAbi);
+        return SupportedArchitectures.getAbi().equalsIgnoreCase(buildAbi);
     }
 
     private static String getBuildAbi() {
