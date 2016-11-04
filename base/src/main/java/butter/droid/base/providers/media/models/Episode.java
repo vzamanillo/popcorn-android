@@ -33,18 +33,18 @@ public class Episode extends Media implements Parcelable {
     public int episode;
     public int season;
     public String overview;
-    public String tvdbId;
+    private String tvdbId;
     public boolean dateBased;
     public Map<String, Torrent> torrents = new HashMap<>();
 
-    protected MetaProvider mMetaProvider;
+    private MetaProvider mMetaProvider;
 
     public Episode(MediaProvider mediaProvider, SubsProvider subsProvider, MetaProvider metaProvider) {
         super(mediaProvider, subsProvider);
         mMetaProvider = metaProvider;
     }
 
-    protected Episode(Parcel in) {
+    Episode(Parcel in) {
         super(in);
         aired = in.readInt();
         episode = in.readInt();

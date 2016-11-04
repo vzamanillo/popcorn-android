@@ -112,7 +112,7 @@ public class TraktProvider extends MetaProvider {
 
     abstract class TraktTask extends AsyncTask<Void, Void, MetaData> {
 
-        protected Exception mException;
+        Exception mException;
         private Callback mCallback;
 
         public TraktTask(Callback callback) {

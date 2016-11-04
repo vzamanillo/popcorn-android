@@ -42,12 +42,12 @@ import timber.log.Timber;
 
 public class BeamServer {
 
-    public static final FileType
-            MP4 = new FileType("mp4", "video/mp4", "DLNA.ORG_PN=AVC_MP4_BL_L3L_SD_AAC;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming"),
-            AVI = new FileType("avi", "video/x-msvideo", "DLNA.ORG_PN=AVC_MP4_BL_L3L_SD_AAC;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming"),
-            MKV = new FileType("mkv", "video/x-matroska", "DLNA.ORG_PN=AVC_MKV_MP_HD_AC3;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming"),
-            SRT = new FileType("srt", "application/x-subrip", "*", ""),
-            VTT = new FileType("vtt", "text/vtt", "*", "");
+    private static final FileType
+            MP4 = new FileType("mp4", "video/mp4", "DLNA.ORG_PN=AVC_MP4_BL_L3L_SD_AAC;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming");
+    private static final FileType AVI = new FileType("avi", "video/x-msvideo", "DLNA.ORG_PN=AVC_MP4_BL_L3L_SD_AAC;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming");
+    private static final FileType MKV = new FileType("mkv", "video/x-matroska", "DLNA.ORG_PN=AVC_MKV_MP_HD_AC3;DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000", "Streaming");
+    public static final FileType SRT = new FileType("srt", "application/x-subrip", "*", "");
+    public static final FileType VTT = new FileType("vtt", "text/vtt", "*", "");
     private static FileType[] FILE_TYPES = {MP4, AVI, MKV};
     private static FileType[] SUB_TYPES = {SRT, VTT};
     private static String sHost;
@@ -103,7 +103,7 @@ public class BeamServer {
         });
     }
 
-    public static void setCurrentVideo(File file) {
+    private static void setCurrentVideo(File file) {
         sCurrentVideo = file;
     }
 

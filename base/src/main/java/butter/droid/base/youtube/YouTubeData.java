@@ -38,7 +38,7 @@ import butter.droid.base.ButterApplication;
 
 public class YouTubeData {
 
-    static final String YOUTUBE_VIDEO_INFORMATION_URL = "http://www.youtube.com/get_video_info?&video_id=";
+    private static final String YOUTUBE_VIDEO_INFORMATION_URL = "http://www.youtube.com/get_video_info?&video_id=";
 
     public static boolean isYouTubeUrl(String youtubeUrl) {
         String expression = "^.*((youtu.be/)|(v/)|(/u/w/)|(embed/)|(watch\\?))\\??v?=?([^#&\\?]*).*"; // var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
@@ -145,7 +145,7 @@ public class YouTubeData {
         return uriStr;
     }
 
-    public static int getSupportedFallbackId(int oldId) {
+    private static int getSupportedFallbackId(int oldId) {
         final int supportedFormatIds[] = {13,  //3GPP (MPEG-4 encoded) Low quality
                 17,  //3GPP (MPEG-4 encoded) Medium quality
                 18,  //MP4  (H.264 encoded) Normal quality

@@ -85,7 +85,7 @@ public abstract class BaseVideoPlayerFragment
     SubtitleDownloader.ISubtitleDownloaderListener {
 
     public static final String RESUME_POSITION = "resume_position";
-    public static final int SUBTITLE_MINIMUM_SIZE = 10;
+    private static final int SUBTITLE_MINIMUM_SIZE = 10;
 
     private LibVLC mLibVLC;
     private MediaPlayer mMediaPlayer;
@@ -362,7 +362,7 @@ public abstract class BaseVideoPlayerFragment
         }
     }
 
-    public void play() {
+    private void play() {
         mMediaPlayer.play();
     }
 
@@ -571,7 +571,7 @@ public abstract class BaseVideoPlayerFragment
         }
     }
 
-    protected void onSubtitleLanguageSelected(String language) {
+    private void onSubtitleLanguageSelected(String language) {
         if (mCurrentSubsLang != null && (language == null || mCurrentSubsLang.equals(language))) {
             return;
         }
@@ -890,7 +890,7 @@ public abstract class BaseVideoPlayerFragment
         mSubs = subtitleFile;
     }
 
-    BeamDeviceListener mDeviceListener = new BeamDeviceListener() {
+    private BeamDeviceListener mDeviceListener = new BeamDeviceListener() {
 
         @Override
         public void onDeviceReady(ConnectableDevice device) {

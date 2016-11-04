@@ -21,9 +21,9 @@ package butter.droid.base.youtube;
  * Represents a format in the "fmt_list" parameter
  * Currently, only id is used
  */
-public class Format {
+class Format {
 
-    protected int mId;
+    private int mId;
 
     /**
      * Construct this object from one of the strings in the "fmt_list" parameter

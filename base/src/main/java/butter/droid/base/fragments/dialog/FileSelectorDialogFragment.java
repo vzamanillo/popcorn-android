@@ -72,7 +72,7 @@ public class FileSelectorDialogFragment extends DialogFragment {
         return view;
     }
 
-    public void setListener(Listener listener) {
+    private void setListener(Listener listener) {
         mListener = listener;
     }
 

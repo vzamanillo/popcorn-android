@@ -63,7 +63,7 @@ public class VPNManager {
         throw new UnsupportedOperationException("Activity does not implement VPNManager.Listener");
     }
 
-    public VPNManager(Activity activity) {
+    private VPNManager(Activity activity) {
         mActivity = activity;
         mListener = (Listener) mActivity;
     }
@@ -165,7 +165,7 @@ public class VPNManager {
         return mIsInstalled;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Bundle data) {
+    private void onActivityResult(int requestCode, int resultCode, Bundle data) {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == START_PROFILE_EMBEDDED) {
                 startEmbeddedProfile();

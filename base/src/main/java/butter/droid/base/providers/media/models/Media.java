@@ -40,8 +40,8 @@ public class Media implements Parcelable {
     public String headerImage;
     public Map<String, String> subtitles;
     public int color = Color.parseColor("#3F51B5");
-    protected SubsProvider mSubsProvider = null;
-    protected MediaProvider mMediaProvider = null;
+    private SubsProvider mSubsProvider = null;
+    private MediaProvider mMediaProvider = null;
 
     public Media(MediaProvider provider, SubsProvider subsProvider) {
         mMediaProvider = provider;

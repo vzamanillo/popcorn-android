@@ -52,7 +52,7 @@ import timber.log.Timber;
 
 public class TorrentService extends Service implements TorrentListener {
 
-    public static final Integer NOTIFICATION_ID = 3423423;
+    private static final Integer NOTIFICATION_ID = 3423423;
 
     private static TorrentService sThis;
 
@@ -183,7 +183,7 @@ public class TorrentService extends Service implements TorrentListener {
         }
     }
 
-    public void stopForeground() {
+    private void stopForeground() {
         stopForeground(true);
         if(mUpdateTimer != null) {
             mUpdateTimer.cancel();
@@ -274,7 +274,7 @@ public class TorrentService extends Service implements TorrentListener {
         context.startService(torrentServiceIntent);
     }
 
-    protected static void stop() {
+    static void stop() {
         sThis.stopStreaming();
     }
 

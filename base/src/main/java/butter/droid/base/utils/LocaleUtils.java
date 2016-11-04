@@ -40,7 +40,7 @@ public class LocaleUtils {
         return Locale.getDefault();
     }
 
-    public static String getLanguageCode(Locale locale) {
+    private static String getLanguageCode(Locale locale) {
         String languageCode = locale.getLanguage();
         if (!locale.getCountry().isEmpty()) {
             languageCode += "-" + locale.getCountry();

@@ -168,7 +168,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     }
 
     @DebugLog
-    protected void setState(final State state, final Object extra) {
+    private void setState(final State state, final Object extra) {
         mState = state;
 
         ThreadUtils.runOnUiThread(new Runnable() {

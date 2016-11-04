@@ -38,7 +38,7 @@ public class Movie extends Media implements Parcelable {
         isMovie = true;
     }
 
-    protected Movie(Parcel in) {
+    private Movie(Parcel in) {
         super(in);
         trailer = in.readString();
         runtime = in.readString();

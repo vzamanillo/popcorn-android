@@ -61,8 +61,8 @@ public class ButterUpdater extends Observable {
     private static ButterUpdater sThis;
 
     public static int NOTIFICATION_ID = 0x808C049;
-    public static final String STATUS_NO_UPDATE = "no_updates";
-    public static final String STATUS_GOT_UPDATE = "got_update";
+    private static final String STATUS_NO_UPDATE = "no_updates";
+    private static final String STATUS_GOT_UPDATE = "got_update";
 
     private static final long MINUTES = 60 * 1000;
     private static final long HOURS = 60 * MINUTES;

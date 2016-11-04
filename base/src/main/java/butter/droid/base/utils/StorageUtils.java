@@ -30,13 +30,13 @@ import java.util.Scanner;
 
 public class StorageUtils {
 
-    public static final String SD_CARD = "sdCard";
-    public static final String EXTERNAL_SD_CARD = "externalSdCard";
+    private static final String SD_CARD = "sdCard";
+    private static final String EXTERNAL_SD_CARD = "externalSdCard";
 
     /**
      * @return {@code true} if external storage is available and writable. {@code false} otherwise.
      */
-    public static boolean isExternalStorageAvailable() {
+    private static boolean isExternalStorageAvailable() {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
@@ -150,7 +150,7 @@ public class StorageUtils {
     /**
      * @return Total internal memory
      */
-    public static int getTotalInternalMemorySize() {
+    private static int getTotalInternalMemorySize() {
         File path = Environment.getDataDirectory();
         StatFs stat = new StatFs(path.getPath());
         int blockSize = stat.getBlockSize();
@@ -176,7 +176,7 @@ public class StorageUtils {
     /**
      * @return Total external memory
      */
-    public static int getTotalExternalMemorySize() {
+    private static int getTotalExternalMemorySize() {
         if (isExternalStorageAvailable()) {
             File path = Environment.getExternalStorageDirectory();
             StatFs stat = new StatFs(path.getPath());

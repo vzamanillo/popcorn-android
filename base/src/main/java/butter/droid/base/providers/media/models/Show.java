@@ -36,7 +36,7 @@ public class Show extends Media implements Parcelable {
     public String country = "";
     public String tvdbId = "";
     public String synopsis = "No synopsis available";
-    public String certification = "n/a";
+    private String certification = "n/a";
     public Integer seasons = 0;
     public LinkedList<Episode> episodes = new LinkedList<>();
 
@@ -44,7 +44,7 @@ public class Show extends Media implements Parcelable {
         super(mediaProvider, subsProvider);
     }
 
-    protected Show(Parcel in) {
+    private Show(Parcel in) {
         super(in);
         airDay = in.readString();
         airTime = in.readString();

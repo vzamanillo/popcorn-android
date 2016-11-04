@@ -26,7 +26,7 @@ public class Style {
      *
      * @param styleName = identifier of this style
      */
-    protected Style(String styleName) {
+    Style(String styleName) {
         this.iD = styleName;
     }
 
@@ -36,7 +36,7 @@ public class Style {
      * @param styleName Style name
      * @param style Style object
      */
-    protected Style(String styleName, Style style) {
+    Style(String styleName, Style style) {
         this.iD = styleName;
         this.font = style.font;
         this.fontSize = style.fontSize;
@@ -50,19 +50,19 @@ public class Style {
     }
 
     /* ATTRIBUTES */
-    protected String iD;
-    protected String font;
-    protected String fontSize;
+    String iD;
+    String font;
+    String fontSize;
     /**
      * colors are stored as 8 chars long RGBA
      */
-    protected String color;
-    protected String backgroundColor;
-    protected String textAlign = "";
+    String color;
+    String backgroundColor;
+    String textAlign = "";
 
-    protected boolean italic;
-    protected boolean bold;
-    protected boolean underline;
+    boolean italic;
+    boolean bold;
+    boolean underline;
 
 	/* METHODS */
 
@@ -72,7 +72,7 @@ public class Style {
      * @param format supported: "name", "&HBBGGRR", "&HAABBGGRR", "decimalCodedBBGGRR", "decimalCodedAABBGGRR"
      * @param value  RRGGBBAA string
      */
-    protected static String getRGBValue(String format, String value) {
+    static String getRGBValue(String format, String value) {
         String color = null;
         if (format.equalsIgnoreCase("name")) {
             //standard color format from W3C
@@ -165,7 +165,7 @@ public class Style {
         return color;
     }
 
-    protected static String defaultID() {
+    static String defaultID() {
         return "default" + styleCounter++;
     }
 

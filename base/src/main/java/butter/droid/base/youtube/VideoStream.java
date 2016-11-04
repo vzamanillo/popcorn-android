@@ -23,9 +23,9 @@ import java.util.Map;
 /**
  * Represents a video stream
  */
-public class VideoStream {
+class VideoStream {
 
-    protected String mUrl;
+    private String mUrl;
 
     /**
      * Construct a video stream from one of the strings obtained

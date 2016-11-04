@@ -32,8 +32,8 @@ import de.timroes.axmlrpc.XMLRPCServerException;
 
 public class OpenSubsProvider extends SubsProvider {
 
-    protected String mApiUrl = "http://api.opensubtitles.org/xml-rpc";
-    protected String mUserAgent = "Popcorn Time v1";//"Popcorn Time Android v1";
+    private String mApiUrl = "http://api.opensubtitles.org/xml-rpc";
+    private String mUserAgent = "Popcorn Time v1";//"Popcorn Time Android v1";
 
     @Override
     public void getList(Movie movie, Callback callback) {

@@ -19,7 +19,7 @@ package butter.droid.base.updater;
 
 import java.util.Map;
 
-public class UpdaterData {
+class UpdaterData {
     public Map<String, Map<String, Arch>> mobile;
     public Map<String, Map<String, Arch>> tv;
 

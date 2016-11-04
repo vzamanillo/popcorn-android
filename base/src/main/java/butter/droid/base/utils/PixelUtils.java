@@ -97,7 +97,7 @@ public class PixelUtils {
         return size.y;
     }
 
-    public static float getScreenDensity(Context context) {
+    private static float getScreenDensity(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -119,6 +119,6 @@ public class PixelUtils {
     }
 
 
-    public static final int TABLET_MIN_DP_WEIGHT = 800;
+    private static final int TABLET_MIN_DP_WEIGHT = 800;
 
 }

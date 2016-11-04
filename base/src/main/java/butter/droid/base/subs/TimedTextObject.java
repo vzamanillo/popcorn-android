@@ -82,7 +82,7 @@ public class TimedTextObject {
     /**
      * Protected constructor so it can't be created from outside
      */
-    protected TimedTextObject() {
+    TimedTextObject() {
         styling = new Hashtable<>();
         captions = new TreeMap<>();
 
@@ -133,7 +133,7 @@ public class TimedTextObject {
      * This might come useful when default styles get created and cover too much.
      * It require a unique iteration through all captions.
      */
-    protected void cleanUnusedStyles() {
+    void cleanUnusedStyles() {
         //here all used styles will be stored
         Hashtable<String, Style> usedStyles = new Hashtable<>();
         //we iterate over the captions
