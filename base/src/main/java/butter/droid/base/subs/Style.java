@@ -137,20 +137,18 @@ public class Style {
             }
         } else if (format.equalsIgnoreCase("&HBBGGRR")) {
             //hex format from SSA
-            StringBuilder sb = new StringBuilder();
-            sb.append(value.substring(6));
-            sb.append(value.substring(4, 5));
-            sb.append(value.substring(2, 3));
-            sb.append("ff");
-            color = sb.toString();
+            String sb = value.substring(6) +
+                    value.substring(4, 5) +
+                    value.substring(2, 3) +
+                    "ff";
+            color = sb;
         } else if (format.equalsIgnoreCase("&HAABBGGRR")) {
             //hex format from ASS
-            StringBuilder sb = new StringBuilder();
-            sb.append(value.substring(8));
-            sb.append(value.substring(6, 7));
-            sb.append(value.substring(4, 5));
-            sb.append(value.substring(2, 3));
-            color = sb.toString();
+            String sb = value.substring(8) +
+                    value.substring(6, 7) +
+                    value.substring(4, 5) +
+                    value.substring(2, 3);
+            color = sb;
         } else if (format.equalsIgnoreCase("decimalCodedBBGGRR")) {
             //normal format from SSA
             color = Integer.toHexString(Integer.parseInt(value));
