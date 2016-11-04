@@ -19,6 +19,7 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 import android.annotation.SuppressLint;
+import android.util.SparseArray;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.squareup.okhttp.Call;
@@ -312,7 +313,7 @@ public class AnimeProvider extends MediaProvider {
                         }
                     }
 
-                    Map<Integer, Episode> episodeMap = new HashMap<>();
+                    SparseArray<Episode> episodeMap = new SparseArray<>();
                     for (LinkedTreeMap<String, Object> episode : episodes) {
                         try {
                             Episode episodeObject = new Episode(sMediaProvider, null, null);
@@ -347,7 +348,11 @@ public class AnimeProvider extends MediaProvider {
                             e.printStackTrace();
                         }
                     }
-                    show.episodes = new LinkedList<>(episodeMap.values());
+
+                    show.episodes = new LinkedList<Episode>();
+                    for (int i = 0; i < episodeMap.size(); i++)
+                        show.episodes.add(episodeMap.valueAt(i));
+
                     media = show;
                 }
 
