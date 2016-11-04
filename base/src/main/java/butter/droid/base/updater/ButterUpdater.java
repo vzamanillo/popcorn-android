@@ -49,6 +49,7 @@ import java.util.zip.Checksum;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
+import butter.droid.base.compat.SupportedArchitectures;
 import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
@@ -188,11 +189,7 @@ public class ButterUpdater extends Observable {
 
             if (!forced) return;
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                mAbi = Build.CPU_ABI.toLowerCase(Locale.US);
-            } else {
-                mAbi = Build.SUPPORTED_ABIS[0].toLowerCase(Locale.US);
-            }
+            mAbi = SupportedArchitectures.getAbi();
 
             if (mPackageName.contains("tv")) {
                 mVariantStr = "tv";
