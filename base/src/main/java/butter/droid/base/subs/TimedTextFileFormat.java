@@ -17,8 +17,6 @@
 
 package butter.droid.base.subs;
 
-import java.io.IOException;
-
 /**
  * This class specifies the interface for any format supported by the converter, these formats must
  * create a {@link butter.droid.base.subs.TimedTextObject} from an {@link java.io.InputStream} (so it can process files form standard In or uploads)
@@ -55,7 +53,7 @@ public abstract class TimedTextFileFormat {
      */
     protected abstract TimedTextObject parseFile(String fileName, String[] inputString) throws FatalParsingException;
 
-    public TimedTextObject parseFile(String fileName, String inputString) throws IOException, FatalParsingException {
+    public TimedTextObject parseFile(String fileName, String inputString) throws FatalParsingException {
         return parseFile(fileName, inputString.split("\n|\r\n"));
     }
 
