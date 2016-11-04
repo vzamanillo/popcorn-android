@@ -153,7 +153,7 @@ public class TorrentService extends Service implements TorrentListener {
                 .setContentText(getString(R.string.tap_to_resume))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setPriority(Notification.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(pendingIntent)
                 .addAction(stopAction)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE);

@@ -132,7 +132,7 @@ public class BeamPlayerNotificationService extends Service {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setPriority(Notification.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         builder.addAction(generateAction(R.drawable.ic_av_rewind, "Rewind", ACTION_REWIND));
