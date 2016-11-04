@@ -49,9 +49,9 @@ public class Option implements Comparable<Option> {
 
         Option option = (Option) o;
 
-        if (name != null ? !name.equals(option.name) : option.name != null) return false;
-        if (data != null ? !data.equals(option.data) : option.data != null) return false;
-        return path != null ? path.equals(option.path) : option.path == null;
+        return name != null ? name.equals(option.name) : option.name == null
+                && (data != null ? data.equals(option.data) : option.data == null
+                && (path != null ? path.equals(option.path) : option.path == null));
 
     }
 
