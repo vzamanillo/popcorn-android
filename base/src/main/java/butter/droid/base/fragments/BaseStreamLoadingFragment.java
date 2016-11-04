@@ -71,7 +71,6 @@ public abstract class BaseStreamLoadingFragment extends Fragment
         SubsProvider.Callback {
 
     protected FragmentListener mCallback;
-    private SubsProvider mSubsProvider;
     protected boolean mPlayingExternal = false;
     protected Boolean mPlayerStarted = false;
     private Boolean mHasSubs = false;
@@ -83,7 +82,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
     private enum SubsStatus {SUCCESS, FAILURE, DOWNLOADING}
 
     private SubsStatus mSubsStatus = SubsStatus.DOWNLOADING;
-    private String mSubtitleLanguage = null, mVideoLocation = "";
+    private String mVideoLocation = "";
 
     public enum State {
         UNINITIALISED, WAITING_TORRENT, WAITING_SUBTITLES, BUFFERING, STREAMING, ERROR
@@ -317,7 +316,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
         Media media = mStreamInfo.getMedia();
         if (media == null) return;
 
-        mSubsProvider = media.getSubsProvider();
+        SubsProvider mSubsProvider = media.getSubsProvider();
         if (mSubsProvider == null) return;
 
         if (mStreamInfo.isShow()) {
@@ -348,7 +347,7 @@ public abstract class BaseStreamLoadingFragment extends Fragment
         }
 
         if (mStreamInfo.getSubtitleLanguage() != null && !mStreamInfo.getSubtitleLanguage().equals(SubsProvider.SUBTITLE_LANGUAGE_NONE)) {
-            mSubtitleLanguage = mStreamInfo.getSubtitleLanguage();
+            String mSubtitleLanguage = mStreamInfo.getSubtitleLanguage();
             mSubsStatus = SubsStatus.DOWNLOADING;
             mHasSubs = true;
             SubtitleDownloader subtitleDownloader = new SubtitleDownloader(getActivity(), mStreamInfo, mSubtitleLanguage);

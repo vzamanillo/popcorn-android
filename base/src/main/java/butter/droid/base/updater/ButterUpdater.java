@@ -128,6 +128,20 @@ public class ButterUpdater extends Observable {
             }
         }
 
+        BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                // do application-specific task(s) based on the current network state, such
+                // as enabling queuing of HTTP requests when currentNetworkInfo is connected etc.
+                if (NetworkUtils.isWifiConnected(context)) {
+                    checkUpdates(false);
+                    mUpdateHandler.postDelayed(periodicUpdate, UPDATE_INTERVAL);
+                } else {
+                    mUpdateHandler.removeCallbacks(periodicUpdate);    // no network anyway
+                }
+            }
+        };
         context.registerReceiver(mConnectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
@@ -301,21 +315,6 @@ public class ButterUpdater extends Observable {
     public void checkUpdatesManually() {
         checkUpdates(true);
     }
-
-    private BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            // do application-specific task(s) based on the current network state, such
-            // as enabling queuing of HTTP requests when currentNetworkInfo is connected etc.
-            if (NetworkUtils.isWifiConnected(context)) {
-                checkUpdates(false);
-                mUpdateHandler.postDelayed(periodicUpdate, UPDATE_INTERVAL);
-            } else {
-                mUpdateHandler.removeCallbacks(periodicUpdate);    // no network anyway
-            }
-        }
-    };
 
     private String SHA1(String filename) {
         final int BUFFER_SIZE = 8192;

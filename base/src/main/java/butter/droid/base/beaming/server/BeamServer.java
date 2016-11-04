@@ -50,7 +50,6 @@ public class BeamServer {
             VTT = new FileType("vtt", "text/vtt", "*", "");
     private static FileType[] FILE_TYPES = {MP4, AVI, MKV};
     private static FileType[] SUB_TYPES = {SRT, VTT};
-    private static HashMap<String, FileType> EXTENSIONS, CONTENT_TYPES;
     private static String sHost;
     private static Integer sPort;
     private static File sCurrentVideo = null, sCurrentSubs = null;
@@ -60,8 +59,8 @@ public class BeamServer {
     private WifiManager.WifiLock mWifiLock;
 
     static {
-        EXTENSIONS = new HashMap<>();
-        CONTENT_TYPES = new HashMap<>();
+        HashMap<String, FileType> EXTENSIONS = new HashMap<>();
+        HashMap<String, FileType> CONTENT_TYPES = new HashMap<>();
         for (FileType localFileType : FILE_TYPES) {
             EXTENSIONS.put(localFileType.extension, localFileType);
             CONTENT_TYPES.put(localFileType.mimeType, localFileType);

@@ -54,8 +54,6 @@ public class TorrentService extends Service implements TorrentListener {
 
     public static final Integer NOTIFICATION_ID = 3423423;
 
-    private static String WAKE_LOCK = "TorrentService_WakeLock";
-
     private static TorrentService sThis;
 
     private TorrentStream mTorrentStream;
@@ -207,6 +205,7 @@ public class TorrentService extends Service implements TorrentListener {
             mWakeLock.release();
             mWakeLock = null;
         }
+        String WAKE_LOCK = "TorrentService_WakeLock";
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK);
         mWakeLock.acquire();
 
