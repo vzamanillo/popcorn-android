@@ -33,7 +33,7 @@ public class YSubsProvider extends SubsProvider {
     private static final String API_URL = "http://api.yifysubtitles.com/subs/";
     private static final String MIRROR_URL = "http://api.ysubs.com/subs/";
     private static final String PREFIX = "http://www.yifysubtitles.com/";
-    private static final HashMap<String, String> LANGUAGE_MAPPING = new HashMap<String, String>();
+    private static final HashMap<String, String> LANGUAGE_MAPPING = new HashMap<>();
 
     static {
         LANGUAGE_MAPPING.put("albanian", "sq");

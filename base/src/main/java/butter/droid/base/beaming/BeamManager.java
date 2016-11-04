@@ -257,9 +257,7 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
                 URI subsUri = new URI(subsUrl.getProtocol(), subsUrl.getUserInfo(), subsUrl.getHost(), subsUrl.getPort(), subsUrl.getPath(), subsUrl.getQuery(), subsUrl.getRef());
                 subsLocation = subsUri.toString();
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             e.printStackTrace();
         }
 

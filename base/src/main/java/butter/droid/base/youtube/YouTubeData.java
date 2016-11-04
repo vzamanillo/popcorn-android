@@ -85,7 +85,7 @@ public class YouTubeData {
         String infoStr = response.body().string();
 
         String[] args = infoStr.split("&");
-        Map<String, String> argMap = new HashMap<String, String>();
+        Map<String, String> argMap = new HashMap<>();
         for (String arg : args) {
             String[] valStrArr = arg.split("=");
             if (valStrArr.length >= 2) {
@@ -97,7 +97,7 @@ public class YouTubeData {
 
         //Populate the list of formats for the video
         String fmtList = URLDecoder.decode(argMap.get("fmt_list"), "utf-8");
-        ArrayList<Format> formats = new ArrayList<Format>();
+        ArrayList<Format> formats = new ArrayList<>();
         if (null != fmtList) {
             String formatStrs[] = fmtList.split(",");
 
@@ -111,7 +111,7 @@ public class YouTubeData {
         String streamList = argMap.get("url_encoded_fmt_stream_map");
         if (null != streamList) {
             String streamStrs[] = streamList.split(",");
-            ArrayList<VideoStream> streams = new ArrayList<VideoStream>();
+            ArrayList<VideoStream> streams = new ArrayList<>();
             for (String streamStr : streamStrs) {
                 VideoStream lStream = new VideoStream(streamStr);
                 streams.add(lStream);

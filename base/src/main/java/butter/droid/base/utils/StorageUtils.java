@@ -45,10 +45,10 @@ public class StorageUtils {
      * @return A map of all storage locations available
      */
     public static Map<String, File> getAllStorageLocations() {
-        Map<String, File> map = new HashMap<String, File>(10);
+        Map<String, File> map = new HashMap<>(10);
 
-        List<String> mMounts = new ArrayList<String>(10);
-        List<String> mVold = new ArrayList<String>(10);
+        List<String> mMounts = new ArrayList<>(10);
+        List<String> mVold = new ArrayList<>(10);
         mMounts.add("/mnt/sdcard");
         mVold.add("/mnt/sdcard");
 
@@ -102,7 +102,7 @@ public class StorageUtils {
         }
         mVold.clear();
 
-        List<String> mountHash = new ArrayList<String>(10);
+        List<String> mountHash = new ArrayList<>(10);
 
         for (String mount : mMounts) {
             File root = new File(mount);

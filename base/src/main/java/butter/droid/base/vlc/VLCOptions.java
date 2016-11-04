@@ -55,7 +55,7 @@ public class VLCOptions {
     public static ArrayList<String> getLibOptions(Context context, boolean timeStreching, String subtitlesEncoding, boolean frameSkip, String chroma, boolean verboseMode) {
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        ArrayList<String> options = new ArrayList<String>(50);
+        ArrayList<String> options = new ArrayList<>(50);
 
         int deblocking = getDeblocking(-1);
 

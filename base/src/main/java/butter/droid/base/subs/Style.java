@@ -77,44 +77,65 @@ public class Style {
         String color = null;
         if (format.equalsIgnoreCase("name")) {
             //standard color format from W3C
-            if (value.equals("transparent"))
-                color = "00000000";
-            else if (value.equals("black"))
-                color = "000000ff";
-            else if (value.equals("silver"))
-                color = "c0c0c0ff";
-            else if (value.equals("gray"))
-                color = "808080ff";
-            else if (value.equals("white"))
-                color = "ffffffff";
-            else if (value.equals("maroon"))
-                color = "800000ff";
-            else if (value.equals("red"))
-                color = "ff0000ff";
-            else if (value.equals("purple"))
-                color = "800080ff";
-            else if (value.equals("fuchsia"))
-                color = "ff00ffff";
-            else if (value.equals("magenta"))
-                color = "ff00ffff ";
-            else if (value.equals("green"))
-                color = "008000ff";
-            else if (value.equals("lime"))
-                color = "00ff00ff";
-            else if (value.equals("olive"))
-                color = "808000ff";
-            else if (value.equals("yellow"))
-                color = "ffff00ff";
-            else if (value.equals("navy"))
-                color = "000080ff";
-            else if (value.equals("blue"))
-                color = "0000ffff";
-            else if (value.equals("teal"))
-                color = "008080ff";
-            else if (value.equals("aqua"))
-                color = "00ffffff";
-            else if (value.equals("cyan"))
-                color = "00ffffff ";
+            switch (value) {
+                case "transparent":
+                    color = "00000000";
+                    break;
+                case "black":
+                    color = "000000ff";
+                    break;
+                case "silver":
+                    color = "c0c0c0ff";
+                    break;
+                case "gray":
+                    color = "808080ff";
+                    break;
+                case "white":
+                    color = "ffffffff";
+                    break;
+                case "maroon":
+                    color = "800000ff";
+                    break;
+                case "red":
+                    color = "ff0000ff";
+                    break;
+                case "purple":
+                    color = "800080ff";
+                    break;
+                case "fuchsia":
+                    color = "ff00ffff";
+                    break;
+                case "magenta":
+                    color = "ff00ffff ";
+                    break;
+                case "green":
+                    color = "008000ff";
+                    break;
+                case "lime":
+                    color = "00ff00ff";
+                    break;
+                case "olive":
+                    color = "808000ff";
+                    break;
+                case "yellow":
+                    color = "ffff00ff";
+                    break;
+                case "navy":
+                    color = "000080ff";
+                    break;
+                case "blue":
+                    color = "0000ffff";
+                    break;
+                case "teal":
+                    color = "008080ff";
+                    break;
+                case "aqua":
+                    color = "00ffffff";
+                    break;
+                case "cyan":
+                    color = "00ffffff ";
+                    break;
+            }
         } else if (format.equalsIgnoreCase("&HBBGGRR")) {
             //hex format from SSA
             StringBuilder sb = new StringBuilder();

@@ -26,7 +26,6 @@ import com.squareup.okhttp.Response;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -128,10 +127,6 @@ public abstract class SubsProvider extends BaseProvider {
                                 e.printStackTrace();
                                 callback.onFailure(response.request(), new IOException("FatalParsingException"));
                                 failure = true;
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                                callback.onFailure(response.request(), e);
-                                failure = true;
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 callback.onFailure(response.request(), e);
@@ -149,9 +144,7 @@ public abstract class SubsProvider extends BaseProvider {
                 });
 
                 return call;
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (RuntimeException | IOException e) {
                 e.printStackTrace();
             }
         }

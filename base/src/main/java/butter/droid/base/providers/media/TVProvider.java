@@ -62,7 +62,7 @@ public class TVProvider extends MediaProvider {
             currentList = (ArrayList<Media>) existingList.clone();
         }
 
-        ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+        ArrayList<NameValuePair> params = new ArrayList<>();
         params.add(new NameValuePair("limit", "30"));
 
         if (filters == null) {

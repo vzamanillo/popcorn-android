@@ -83,8 +83,8 @@ public class TimedTextObject {
      * Protected constructor so it can't be created from outside
      */
     protected TimedTextObject() {
-        styling = new Hashtable<String, Style>();
-        captions = new TreeMap<Integer, Caption>();
+        styling = new Hashtable<>();
+        captions = new TreeMap<>();
 
         warnings = "List of non fatal errors produced during parsing:\n\n";
     }
@@ -135,7 +135,7 @@ public class TimedTextObject {
      */
     protected void cleanUnusedStyles() {
         //here all used styles will be stored
-        Hashtable<String, Style> usedStyles = new Hashtable<String, Style>();
+        Hashtable<String, Style> usedStyles = new Hashtable<>();
         //we iterate over the captions
         for (Caption current : captions.values()) {
             //new caption

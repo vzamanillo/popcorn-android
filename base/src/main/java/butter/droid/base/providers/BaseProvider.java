@@ -83,9 +83,7 @@ public abstract class BaseProvider {
                     return null;
                 }
             }.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
