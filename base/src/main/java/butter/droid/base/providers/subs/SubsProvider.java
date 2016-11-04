@@ -47,6 +47,7 @@ import butter.droid.base.subs.TimedTextObject;
 import butter.droid.base.utils.FileUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.StorageUtils;
+import timber.log.Timber;
 
 public abstract class SubsProvider extends BaseProvider {
     public static final String SUBS_CALL = "subs_http_call";
@@ -103,13 +104,17 @@ public abstract class SubsProvider extends BaseProvider {
                             InputStream inputStream = null;
                             boolean failure = false;
                             try {
-
-
-                                subsDirectory.mkdirs();
+                                if (!subsDirectory.mkdirs()){
+                                    Timber.w("Could not create directory: " + subsDirectory.getAbsolutePath());
+                                }
                                 if (srtPath.exists()) {
                                     File to = new File(subsDirectory, "temp" + System.currentTimeMillis());
-                                    srtPath.renameTo(to);
-                                    to.delete();
+                                    if (!srtPath.renameTo(to)){
+                                        Timber.w("Could not rename file: " + srtPath.getAbsolutePath());
+                                    }
+                                    if (!to.delete()){
+                                        Timber.w("Could not delete file: " + to.getAbsolutePath());
+                                    }
                                 }
 
                                 inputStream = response.body().byteStream();

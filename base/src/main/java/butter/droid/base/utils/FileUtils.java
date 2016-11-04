@@ -41,6 +41,7 @@ import java.nio.charset.CharsetDecoder;
 import java.util.HashMap;
 
 import butter.droid.base.content.UnicodeBOMInputStream;
+import timber.log.Timber;
 
 public class FileUtils {
 
@@ -214,7 +215,9 @@ public class FileUtils {
      */
     public static void saveStringToFile(String string, File path, String encoding) throws IOException {
         if (path.exists()) {
-            path.delete();
+            if (!path.delete()){
+                Timber.w("Could not delete file: " + path.getAbsolutePath());
+            }
         }
 
         if ((path.getParentFile().mkdirs() || path.getParentFile().exists()) && (path.exists() || path.createNewFile())) {

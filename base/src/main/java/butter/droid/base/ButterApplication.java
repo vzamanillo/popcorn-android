@@ -87,7 +87,9 @@ public class ButterApplication extends Application implements ButterUpdater.List
             FileUtils.recursiveDelete(new File(path + "/subs"));
         } else {
             File statusFile = new File(directory, "status.json");
-            statusFile.delete();
+            if(!statusFile.delete()){
+                Timber.w("Could not delete file: " + statusFile.getAbsolutePath());
+            }
         }
 
         Timber.d("StorageLocations: " + StorageUtils.getAllStorageLocations());
@@ -125,7 +127,9 @@ public class ButterApplication extends Application implements ButterUpdater.List
 
             int cacheSize = 10 * 1024 * 1024;
             File cacheLocation = new File(PrefUtils.get(ButterApplication.getAppContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(ButterApplication.getAppContext()).toString()));
-            cacheLocation.mkdirs();
+            if (!cacheLocation.mkdirs()){
+                Timber.w("Could not create directory: " + cacheLocation.getAbsolutePath());
+            }
             com.squareup.okhttp.Cache cache = null;
             try {
                 cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
