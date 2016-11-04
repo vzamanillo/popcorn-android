@@ -24,6 +24,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -51,7 +52,7 @@ public class PixelUtils {
     }
 
     public static Drawable changeDrawableColor(Context context, Integer resId, Integer color) {
-        Drawable drawable = context.getResources().getDrawable(resId).mutate();
+        Drawable drawable = ContextCompat.getDrawable(context, resId).mutate();
         drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
         return drawable;
     }
