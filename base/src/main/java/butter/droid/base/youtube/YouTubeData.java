@@ -28,6 +28,7 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +90,7 @@ public class YouTubeData {
         for (String arg : args) {
             String[] valStrArr = arg.split("=");
             if (valStrArr.length >= 2) {
-                argMap.put(valStrArr[0], URLDecoder.decode(valStrArr[1]));
+                argMap.put(valStrArr[0], URLDecoder.decode(valStrArr[1], Charset.defaultCharset().toString()));
             }
         }
 
