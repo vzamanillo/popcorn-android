@@ -45,9 +45,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import butterknife.ButterKnife;
-import butterknife.Bind;
-import butterknife.OnClick;
 import butter.droid.R;
 import butter.droid.activities.MediaDetailActivity;
 import butter.droid.base.content.preferences.DefaultQuality;
@@ -69,6 +66,9 @@ import butter.droid.base.utils.ThreadUtils;
 import butter.droid.base.utils.VersionUtils;
 import butter.droid.widget.BottomSheetScrollView;
 import butter.droid.widget.OptionSelector;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class EpisodeDialogFragment extends DialogFragment {
 
@@ -87,27 +87,27 @@ public class EpisodeDialogFragment extends DialogFragment {
     private Show mShow;
     private Magnet mMagnet;
 
-    @Bind(R.id.scrollview)
+    @BindView(R.id.scrollview)
     BottomSheetScrollView mScrollView;
-    @Bind(R.id.placeholder)
+    @BindView(R.id.placeholder)
     View mPlaceholder;
-    @Bind(R.id.play_button)
+    @BindView(R.id.play_button)
     ImageButton mPlayButton;
-    @Bind(R.id.header_image)
+    @BindView(R.id.header_image)
     ImageView mHeaderImage;
-    @Bind(R.id.info)
+    @BindView(R.id.info)
     TextView mInfo;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView mTitle;
-    @Bind(R.id.aired)
+    @BindView(R.id.aired)
     TextView mAired;
-    @Bind(R.id.synopsis)
+    @BindView(R.id.synopsis)
     TextView mSynopsis;
-    @Bind(R.id.subtitles)
+    @BindView(R.id.subtitles)
     OptionSelector mSubtitles;
-    @Bind(R.id.quality)
+    @BindView(R.id.quality)
     OptionSelector mQuality;
-    @Bind(R.id.magnet)
+    @BindView(R.id.magnet)
     @Nullable
     ImageButton mOpenMagnet;
 

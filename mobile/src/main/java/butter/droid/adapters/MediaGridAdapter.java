@@ -33,20 +33,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.Bind;
-import hugo.weaving.DebugLog;
 import butter.droid.R;
 import butter.droid.base.providers.media.models.Media;
-import butter.droid.base.utils.AnimUtils;
 import butter.droid.base.utils.LocaleUtils;
 import butter.droid.base.utils.PixelUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import hugo.weaving.DebugLog;
 
 
 public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -193,13 +191,13 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         View itemView;
-        @Bind(R.id.focus_overlay)
+        @BindView(R.id.focus_overlay)
         View focusOverlay;
-        @Bind(R.id.cover_image)
+        @BindView(R.id.cover_image)
         ImageView coverImage;
-        @Bind(R.id.title)
+        @BindView(R.id.title)
         TextView title;
-        @Bind(R.id.year)
+        @BindView(R.id.year)
         TextView year;
 
         private View.OnFocusChangeListener mOnFocusChangeListener = new View.OnFocusChangeListener() {

@@ -43,7 +43,7 @@ import java.util.Map;
 
 import butter.droid.base.R;
 import butter.droid.base.utils.ThreadUtils;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BeamDeviceAdapter extends BaseAdapter {
@@ -54,11 +54,11 @@ public class BeamDeviceAdapter extends BaseAdapter {
     private ArrayList<String> mKeys = new ArrayList<>();
 
     static class ViewHolder {
-        @Bind(android.R.id.icon)
+        @BindView(android.R.id.icon)
         ImageView icon;
-        @Bind(android.R.id.text1)
+        @BindView(android.R.id.text1)
         TextView text1;
-        @Bind(android.R.id.text2)
+        @BindView(android.R.id.text2)
         TextView text2;
 
         public ViewHolder(View v) {

@@ -39,9 +39,6 @@ import com.squareup.okhttp.Call;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.Bind;
-import hugo.weaving.DebugLog;
 import butter.droid.R;
 import butter.droid.activities.MediaDetailActivity;
 import butter.droid.adapters.MediaGridAdapter;
@@ -54,6 +51,9 @@ import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.fragments.dialog.LoadingDetailDialogFragment;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 /**
@@ -115,13 +115,13 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     private String mGenre;
 
     View mRootView;
-    @Bind(R.id.progressOverlay)
+    @BindView(R.id.progressOverlay)
     LinearLayout mProgressOverlay;
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    @Bind(R.id.emptyView)
+    @BindView(R.id.emptyView)
     TextView mEmptyView;
-    @Bind(R.id.progress_textview)
+    @BindView(R.id.progress_textview)
     TextView mProgressTextView;
 
     public static MediaListFragment newInstance(Mode mode, MediaProvider provider, MediaProvider.Filters.Sort filter, MediaProvider.Filters.Order defOrder) {
@@ -256,7 +256,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                         if (mAdapter.isLoading()) mAdapter.removeLoading();
                         //show the progress bar
                         mRecyclerView.setVisibility(View.VISIBLE);
-                        //				mRecyclerView.animate().alpha(0.5f).setDuration(500).start();
+                        mRecyclerView.animate().alpha(0.5f).setDuration(500).start();
                         mEmptyView.setVisibility(View.GONE);
                         mProgressOverlay.setVisibility(View.VISIBLE);
                         break;

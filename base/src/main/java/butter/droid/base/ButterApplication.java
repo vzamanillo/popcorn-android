@@ -66,6 +66,9 @@ public class ButterApplication extends Application implements ButterUpdater.List
 
         sDefSystemLanguage = LocaleUtils.getCurrentAsString();
 
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
         LeakCanary.install(this);
         Foreground.init(this);
 
