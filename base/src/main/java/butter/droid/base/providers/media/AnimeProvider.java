@@ -28,10 +28,8 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
