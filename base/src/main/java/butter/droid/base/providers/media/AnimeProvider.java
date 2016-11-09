@@ -349,7 +349,7 @@ public class AnimeProvider extends MediaProvider {
                         }
                     }
 
-                    show.episodes = new LinkedList<Episode>();
+                    show.episodes = new LinkedList<>();
                     for (int i = 0; i < episodeMap.size(); i++)
                         show.episodes.add(episodeMap.valueAt(i));
 
