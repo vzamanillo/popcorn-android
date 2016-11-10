@@ -31,6 +31,8 @@ import android.os.Environment;
 import android.os.Handler;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -42,7 +44,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Observable;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -51,6 +52,7 @@ import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.compat.SupportedArchitectures;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.updater.models.Architecture;
 import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.VersionUtils;
@@ -242,24 +244,20 @@ public class ButterUpdater extends Observable {
             String status = STATUS_NO_UPDATE;
             try {
                 if (response.isSuccessful()) {
-                    UpdaterData data = mGson.fromJson(response.body().string(), UpdaterData.class);
-                    Map<String, Map<String, UpdaterData.Arch>> variant;
-                    if (mVariantStr.equals("tv")) {
-                        variant = data.tv;
-                    } else {
-                        variant = data.mobile;
-                    }
+                    JsonObject data = new JsonParser().parse(response.body().string()).getAsJsonObject();
+                    JsonObject variant = data.getAsJsonObject(mVariantStr);
 
-                    UpdaterData.Arch channel = null;
-                    if (variant.containsKey(mChannelStr) && variant.get(mChannelStr).containsKey(mAbi)) {
-                        channel = variant.get(mChannelStr).get(mAbi);
+                    Architecture arch = null;
+                    JsonObject channel = variant.getAsJsonObject(mChannelStr);
+                    if (channel != null) {
+                        arch = mGson.fromJson(channel.getAsJsonObject(mAbi), Architecture.class);
                     }
 
                     ApplicationInfo appinfo = mContext.getApplicationInfo();
-                    if (channel != null) {
-                        if ((!channel.checksum.equals(SHA1(appinfo.sourceDir)) || channel.versionCode <= mVersionCode) || !VersionUtils.isUsingCorrectBuild()){
+                    if (arch != null) {
+                        if ((!arch.getChecksum().equals(SHA1(appinfo.sourceDir)) || arch.getVersionCode() <= mVersionCode) || !VersionUtils.isUsingCorrectBuild()){
                             status = STATUS_GOT_UPDATE;
-                            downloadFile(channel.updateUrl);
+                            downloadFile(arch.getUpdateUrl());
                         }
                     }
                 }
