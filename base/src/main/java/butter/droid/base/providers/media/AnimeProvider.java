@@ -54,7 +54,7 @@ public class AnimeProvider extends MediaProvider {
         if (existingList == null) {
             currentList = new ArrayList<>();
         } else {
-            currentList = (ArrayList<Media>) existingList.clone();
+            currentList = new ArrayList<>(existingList);
         }
 
         ArrayList<NameValuePair> params = new ArrayList<>();
