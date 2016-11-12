@@ -26,6 +26,7 @@ import com.squareup.okhttp.Request;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -93,13 +94,13 @@ public abstract class BaseProvider {
      * @param valuePairs List with key-value items
      * @return Query string
      */
-    protected String buildQuery(List<NameValuePair> valuePairs) {
+    protected String buildQuery(List<AbstractMap.SimpleEntry<String, String>> valuePairs) {
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
             for (int i = 0; i < valuePairs.size(); i++) {
-                NameValuePair pair = valuePairs.get(i);
-                stringBuilder.append(URLEncoder.encode(pair.getName(), "utf-8"));
+                AbstractMap.SimpleEntry<String, String> pair = valuePairs.get(i);
+                stringBuilder.append(URLEncoder.encode(pair.getKey(), "utf-8"));
                 stringBuilder.append("=");
                 stringBuilder.append(URLEncoder.encode(pair.getValue(), "utf-8"));
                 if (i + 1 != valuePairs.size()) stringBuilder.append("&");
@@ -111,23 +112,4 @@ public abstract class BaseProvider {
 
         return stringBuilder.toString();
     }
-
-    static public class NameValuePair {
-        private String mName;
-        private String mValue;
-
-        public NameValuePair(String name, String value) {
-            mName = name;
-            mValue = value;
-        }
-
-        public String getName() {
-            return mName;
-        }
-
-        public String getValue() {
-            return mValue;
-        }
-    }
-
 }

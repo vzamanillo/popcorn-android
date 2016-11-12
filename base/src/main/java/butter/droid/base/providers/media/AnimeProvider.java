@@ -27,6 +27,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,25 +58,25 @@ public class AnimeProvider extends MediaProvider {
             currentList = new ArrayList<>(existingList);
         }
 
-        ArrayList<NameValuePair> params = new ArrayList<>();
-        params.add(new NameValuePair("limit", "30"));
+        ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("limit", "30"));
 
         if (filters == null) {
             filters = new Filters();
         }
 
         if (filters.keywords != null) {
-            params.add(new NameValuePair("keywords", filters.keywords));
+            params.add(new AbstractMap.SimpleEntry<String, String>("keywords", filters.keywords));
         }
 
         if (filters.genre != null) {
-            params.add(new NameValuePair("genre", filters.genre));
+            params.add(new AbstractMap.SimpleEntry<String, String>("genre", filters.genre));
         }
 
         if (filters.order == Filters.Order.ASC) {
-            params.add(new NameValuePair("order", "1"));
+            params.add(new AbstractMap.SimpleEntry<String, String>("order", "1"));
         } else {
-            params.add(new NameValuePair("order", "-1"));
+            params.add(new AbstractMap.SimpleEntry<String, String>("order", "-1"));
         }
 
         String sort;
@@ -95,7 +96,7 @@ public class AnimeProvider extends MediaProvider {
                 break;
         }
 
-        params.add(new NameValuePair("sort", sort));
+        params.add(new AbstractMap.SimpleEntry<String, String>("sort", sort));
 
         String url = API_URLS[CURRENT_API] + "animes/";
         if (filters.page != null) {
