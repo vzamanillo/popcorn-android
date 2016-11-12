@@ -19,7 +19,8 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 
-import com.google.gson.internal.LinkedTreeMap;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -36,6 +37,8 @@ import butter.droid.base.R;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
+import butter.droid.base.providers.media.models.response.movies.Language;
+import butter.droid.base.providers.media.models.response.movies.Quality;
 import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.providers.subs.YSubsProvider;
 import butter.droid.base.utils.StringUtils;
@@ -54,7 +57,7 @@ public class MoviesProvider extends MediaProvider {
         if (existingList == null) {
             currentList = new ArrayList<>();
         } else {
-            currentList = (ArrayList<Media>) existingList.clone();
+            currentList = new ArrayList<Media>(existingList);
         }
 
         ArrayList<NameValuePair> params = new ArrayList<>();
@@ -156,19 +159,15 @@ public class MoviesProvider extends MediaProvider {
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
-                        String responseStr = response.body().string();
 
-                        ArrayList<LinkedTreeMap<String, Object>> list;
-                        if (responseStr.isEmpty()) {
-                            list = new ArrayList<>();
-                        } else {
-                            list = (ArrayList<LinkedTreeMap<String, Object>>) mGson.fromJson(responseStr, ArrayList.class);
-                        }
+                        ObjectMapper mapper = new ObjectMapper();
 
-                        MovieResponse result = new MovieResponse(list);
+                        List<butter.droid.base.providers.media.models.response.movies.Movie> list = mapper.readValue(response.body().string(), mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.models.response.movies.Movie.class));
+
                         if (list == null) {
                             callback.onFailure(new NetworkErrorException("Empty response"));
                         } else {
+                            MovieResp result = new MovieResp(list);
                             ArrayList<Media> formattedData = result.formatListForPopcorn(currentList);
                             callback.onSuccess(filters, formattedData, list.size() > 0);
                             return;
@@ -243,25 +242,26 @@ public class MoviesProvider extends MediaProvider {
         return returnList;
     }
 
-    static private class MovieResponse {
-        ArrayList<LinkedTreeMap<String, Object>> moviesList;
+    static private class MovieResp {
+        List<butter.droid.base.providers.media.models.response.movies.Movie> movieList;
 
-        public MovieResponse(ArrayList<LinkedTreeMap<String, Object>> moviesList) {
-            this.moviesList = moviesList;
+        public MovieResp(List<butter.droid.base.providers.media.models.response.movies.Movie> movieList) {
+            this.movieList = movieList;
         }
 
         public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList) {
-            for (LinkedTreeMap<String, Object> item : moviesList) {
+            for (butter.droid.base.providers.media.models.response.movies.Movie item: movieList) {
+
                 Movie movie = new Movie(sMediaProvider, sSubsProvider);
 
-                movie.videoId = (String) item.get("imdb_id");
+
+                movie.videoId = item.getImdbId();
                 movie.imdbId = movie.videoId;
 
-                movie.title = (String) item.get("title");
-                movie.year = (String) item.get("year");
+                movie.title = item.getTitle();
+                movie.year = item.getYear();
 
-                List<String> genres = (ArrayList<String>) item.get("genres");
-
+                List<String> genres = item.getGenres();
                 movie.genre = "";
                 if (genres.size() > 0) {
                     StringBuilder stringBuilder = new StringBuilder();
@@ -274,39 +274,31 @@ public class MoviesProvider extends MediaProvider {
                     movie.genre = stringBuilder.toString();
                 }
 
-                movie.rating = Double.toString(((LinkedTreeMap<String, Double>) item.get("rating")).get("percentage") / 10);
-                movie.trailer = (String) item.get("trailer");
-                movie.runtime = (String) item.get("runtime");
-                movie.synopsis = (String) item.get("synopsis");
-                movie.certification = (String) item.get("certification");
+                movie.rating = Double.toString(item.getRating().getPercentage() / 10);
+                movie.trailer = item.getTrailer();
+                movie.runtime = item.getRuntime();
+                movie.synopsis = item.getSynopsis();
+                movie.certification = item.getCertification();
 
-                LinkedTreeMap<String, String> images = (LinkedTreeMap<String, String>) item.get("images");
-                if(!images.get("poster").contains("images/posterholder.png")) {
-                    movie.image = images.get("poster").replace("/original/", "/medium/");
-                    movie.fullImage = images.get("poster");
+                if(!item.getImages().getPoster().contains("images/posterholder.png")) {
+                    movie.image = item.getImages().getPoster().replace("/original/", "/medium/");
+                    movie.fullImage = item.getImages().getPoster();
+                    movie.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
                 }
-                if(!images.get("poster").contains("images/posterholder.png"))
-                    movie.headerImage = images.get("fanart").replace("/original/", "/medium/");
 
-                LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Object>>> torrents = (LinkedTreeMap<String, LinkedTreeMap<String, LinkedTreeMap<String, Object>>>) item.get("torrents");
-                if (torrents != null) {
-                    for (Map.Entry<String, LinkedTreeMap<String, LinkedTreeMap<String, Object>>> langTorrentObj : torrents.entrySet()) {
-                        String langCode = langTorrentObj.getKey();
+                if (item.getTorrents() != null) {
+                    for (Map.Entry<String, Language> language : item.getTorrents().getLanguages().entrySet()) {
                         Map<String, Media.Torrent> torrentMap = new HashMap<>();
-                        for (Map.Entry<String, LinkedTreeMap<String, Object>> torrentEntry : langTorrentObj.getValue().entrySet()) {
-                            LinkedTreeMap<String, Object> torrentObj = torrentEntry.getValue();
-                            String quality = torrentEntry.getKey();
-                            if (quality == null) continue;
-
+                        for (Map.Entry<String, Quality> torrentQuality : language.getValue().getQualities().entrySet()) {
+                            if (torrentQuality == null) continue;
                             Media.Torrent torrent = new Media.Torrent();
+                            torrent.seeds = torrentQuality.getValue().getSeed();
+                            torrent.peers = torrentQuality.getValue().getPeer();
+                            torrent.url = torrentQuality.getValue().getUrl();
 
-                            torrent.seeds = ((Double) torrentObj.get("seed")).intValue();
-                            torrent.peers = ((Double) torrentObj.get("peer")).intValue();
-                            torrent.url = (String) torrentObj.get("url");
-
-                            torrentMap.put(quality, torrent);
+                            torrentMap.put(torrentQuality.getKey(), torrent);
                         }
-                        movie.torrents.put(langCode, torrentMap);
+                        movie.torrents.put(language.getKey(), torrentMap);
                     }
                 }
 
