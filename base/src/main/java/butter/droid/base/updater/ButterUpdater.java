@@ -30,6 +30,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -52,7 +54,6 @@ import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.compat.SupportedArchitectures;
 import butter.droid.base.content.preferences.Prefs;
-import butter.droid.base.updater.models.Architecture;
 import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.VersionUtils;
@@ -244,20 +245,21 @@ public class ButterUpdater extends Observable {
             String status = STATUS_NO_UPDATE;
             try {
                 if (response.isSuccessful()) {
-                    JsonObject data = new JsonParser().parse(response.body().string()).getAsJsonObject();
-                    JsonObject variant = data.getAsJsonObject(mVariantStr);
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode data = mapper.readTree(response.body().string());
+                    JsonNode variant = data.get(mVariantStr);
 
-                    Architecture arch = null;
-                    JsonObject channel = variant.getAsJsonObject(mChannelStr);
+                    JsonNode arch = null;
+                    JsonNode channel = variant.get(mChannelStr);
                     if (channel != null) {
-                        arch = mGson.fromJson(channel.getAsJsonObject(mAbi), Architecture.class);
+                        arch = channel.get(mAbi);
                     }
 
                     ApplicationInfo appinfo = mContext.getApplicationInfo();
                     if (arch != null) {
-                        if ((!arch.getChecksum().equals(SHA1(appinfo.sourceDir)) || arch.getVersionCode() <= mVersionCode) || !VersionUtils.isUsingCorrectBuild()){
+                        if ((!arch.get("checksum").asText().equals(SHA1(appinfo.sourceDir)) || arch.get("versionCode").asInt() <= mVersionCode) || !VersionUtils.isUsingCorrectBuild()){
                             status = STATUS_GOT_UPDATE;
-                            downloadFile(arch.getUpdateUrl());
+                            downloadFile(arch.get("updateUrl").asText());
                         }
                     }
                 }
