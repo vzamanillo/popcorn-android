@@ -1,4 +1,4 @@
-package butter.droid.base.providers.media.models.response.movies;
+package butter.droid.base.providers.media.response.models.movies;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

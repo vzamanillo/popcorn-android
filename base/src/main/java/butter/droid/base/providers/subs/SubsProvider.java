@@ -54,16 +54,6 @@ public abstract class SubsProvider extends BaseProvider {
 
     private static List<String> SUB_EXTENSIONS = Arrays.asList("srt", "ssa", "ass");
 
-    public abstract void getList(Movie movie, Callback callback);
-
-    public abstract void getList(Episode episode, Callback callback);
-
-    public interface Callback {
-        void onSuccess(Map<String, String> items);
-
-        void onFailure(Exception e);
-    }
-
     public static File getStorageLocation(Context context) {
         return new File(PrefUtils.get(context, Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(context).toString()) + "/subs/");
     }
@@ -103,15 +93,15 @@ public abstract class SubsProvider extends BaseProvider {
                             InputStream inputStream = null;
                             boolean failure = false;
                             try {
-                                if (!subsDirectory.mkdirs()){
+                                if (!subsDirectory.mkdirs()) {
                                     Timber.w("Could not create directory: " + subsDirectory.getAbsolutePath());
                                 }
                                 if (srtPath.exists()) {
                                     File to = new File(subsDirectory, "temp" + System.currentTimeMillis());
-                                    if (!srtPath.renameTo(to)){
+                                    if (!srtPath.renameTo(to)) {
                                         Timber.w("Could not rename file: " + srtPath.getAbsolutePath());
                                     }
-                                    if (!to.delete()){
+                                    if (!to.delete()) {
                                         Timber.w("Could not delete file: " + to.getAbsolutePath());
                                     }
                                 }
@@ -223,5 +213,15 @@ public abstract class SubsProvider extends BaseProvider {
         if (subtitleObject != null) {
             FileUtils.saveStringFile(subtitleObject.toSRT(), srtPath);
         }
+    }
+
+    public abstract void getList(Movie movie, Callback callback);
+
+    public abstract void getList(Episode episode, Callback callback);
+
+    public interface Callback {
+        void onSuccess(Map<String, String> items);
+
+        void onFailure(Exception e);
     }
 }

@@ -1,4 +1,4 @@
-package butter.droid.base.providers.media.models.response.movies;
+package butter.droid.base.providers.media.response.models.movies;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,7 +8,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import butter.droid.base.providers.media.models.response.ResponseItem;
+import butter.droid.base.providers.media.response.models.ResponseItem;
+import butter.droid.base.providers.media.response.models.common.Images;
+import butter.droid.base.providers.media.response.models.common.Rating;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,7 +37,7 @@ public class Movie extends ResponseItem {
     @JsonProperty("torrents")
     private Torrents torrents;
     @JsonProperty("genres")
-    private List<String> genres = new ArrayList<String>();
+    private List<String> genres = new ArrayList<>();
     @JsonProperty("images")
     private Images images;
     @JsonProperty("rating")

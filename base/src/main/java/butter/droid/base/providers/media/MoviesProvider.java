@@ -19,7 +19,6 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;
@@ -28,29 +27,24 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
-import butter.droid.base.providers.media.models.Movie;
-import butter.droid.base.providers.media.models.response.movies.Language;
-import butter.droid.base.providers.media.models.response.movies.Quality;
+import butter.droid.base.providers.media.response.MovieResponse;
 import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.providers.subs.YSubsProvider;
-import butter.droid.base.utils.StringUtils;
 import timber.log.Timber;
 
 public class MoviesProvider extends MediaProvider {
 
-    private static Integer CURRENT_API = 0;
     private static final String[] API_URLS = BuildConfig.MOVIE_URLS;
     private static final MoviesProvider sMediaProvider = new MoviesProvider();
     private static final SubsProvider sSubsProvider = new YSubsProvider();
+    private static Integer CURRENT_API = 0;
 
     @Override
     public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
@@ -58,32 +52,32 @@ public class MoviesProvider extends MediaProvider {
         if (existingList == null) {
             currentList = new ArrayList<>();
         } else {
-            currentList = new ArrayList<Media>(existingList);
+            currentList = new ArrayList<>(existingList);
         }
 
         ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
-        params.add(new AbstractMap.SimpleEntry<String, String>("limit", "30"));
+        params.add(new AbstractMap.SimpleEntry<>("limit", "30"));
 
         if (filters == null) {
             filters = new Filters();
         }
 
         if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("keywords", filters.keywords));
+            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
         }
 
         if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("genre", filters.genre));
+            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
         }
 
         if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("order", "1"));
+            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
         } else {
-            params.add(new AbstractMap.SimpleEntry<String, String>("order", "-1"));
+            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
         }
 
-        if(filters.langCode != null) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("lang", filters.langCode));
+        if (filters.langCode != null) {
+            params.add(new AbstractMap.SimpleEntry<>("lang", filters.langCode));
         }
 
         String sort;
@@ -109,7 +103,7 @@ public class MoviesProvider extends MediaProvider {
                 break;
         }
 
-        params.add(new AbstractMap.SimpleEntry<String, String>("sort", sort));
+        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
 
         String url = API_URLS[CURRENT_API] + "movies/";
         if (filters.page != null) {
@@ -145,7 +139,7 @@ public class MoviesProvider extends MediaProvider {
                 if (CURRENT_API >= API_URLS.length - 1) {
                     callback.onFailure(e);
                 } else {
-                    if(url.contains(API_URLS[CURRENT_API])) {
+                    if (url.contains(API_URLS[CURRENT_API])) {
                         url = url.replace(API_URLS[CURRENT_API], API_URLS[CURRENT_API + 1]);
                         CURRENT_API++;
                     } else {
@@ -161,15 +155,18 @@ public class MoviesProvider extends MediaProvider {
                 try {
                     if (response.isSuccessful()) {
 
-                        ObjectMapper mapper = new ObjectMapper();
+                        String responseStr = response.body().string();
 
-                        List<butter.droid.base.providers.media.models.response.movies.Movie> list = mapper.readValue(response.body().string(), mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.models.response.movies.Movie.class));
-
-                        if (list == null) {
+                        if (responseStr.isEmpty()) {
                             callback.onFailure(new NetworkErrorException("Empty response"));
-                        } else {
-                            MovieResp result = new MovieResp(list);
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList);
+                        }
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        List<butter.droid.base.providers.media.response.models.movies.Movie> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.movies.Movie.class));
+
+                        if (!list.isEmpty()) {
+                            MovieResponse result = new MovieResponse(list);
+                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, sMediaProvider, sSubsProvider);
                             callback.onSuccess(filters, formattedData, list.size() > 0);
                             return;
                         }
@@ -198,12 +195,12 @@ public class MoviesProvider extends MediaProvider {
     @Override
     public List<NavInfo> getNavigation() {
         List<NavInfo> tabs = new ArrayList<>();
-        tabs.add(new NavInfo(R.id.movie_filter_trending,Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending),R.drawable.movie_filter_trending));
-        tabs.add(new NavInfo(R.id.movie_filter_popular_now,Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular),R.drawable.movie_filter_popular_now));
-        tabs.add(new NavInfo(R.id.movie_filter_top_rated,Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated),R.drawable.movie_filter_top_rated));
-        tabs.add(new NavInfo(R.id.movie_filter_release_date,Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.release_date),R.drawable.movie_filter_release_date));
-        tabs.add(new NavInfo(R.id.movie_filter_year,Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year),R.drawable.movie_filter_year));
-        tabs.add(new NavInfo(R.id.movie_filter_a_to_z,Filters.Sort.ALPHABET, Filters.Order.ASC, ButterApplication.getAppContext().getString(R.string.a_to_z),R.drawable.movie_filter_a_to_z));
+        tabs.add(new NavInfo(R.id.movie_filter_trending, Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending), R.drawable.movie_filter_trending));
+        tabs.add(new NavInfo(R.id.movie_filter_popular_now, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.movie_filter_popular_now));
+        tabs.add(new NavInfo(R.id.movie_filter_top_rated, Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated), R.drawable.movie_filter_top_rated));
+        tabs.add(new NavInfo(R.id.movie_filter_release_date, Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.release_date), R.drawable.movie_filter_release_date));
+        tabs.add(new NavInfo(R.id.movie_filter_year, Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year), R.drawable.movie_filter_year));
+        tabs.add(new NavInfo(R.id.movie_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.ASC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.movie_filter_a_to_z));
         return tabs;
     }
 
@@ -242,71 +239,4 @@ public class MoviesProvider extends MediaProvider {
         returnList.add(new Genre("western", R.string.genre_western));
         return returnList;
     }
-
-    static private class MovieResp {
-        List<butter.droid.base.providers.media.models.response.movies.Movie> movieList;
-
-        public MovieResp(List<butter.droid.base.providers.media.models.response.movies.Movie> movieList) {
-            this.movieList = movieList;
-        }
-
-        public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList) {
-            for (butter.droid.base.providers.media.models.response.movies.Movie item: movieList) {
-
-                Movie movie = new Movie(sMediaProvider, sSubsProvider);
-
-
-                movie.videoId = item.getImdbId();
-                movie.imdbId = movie.videoId;
-
-                movie.title = item.getTitle();
-                movie.year = item.getYear();
-
-                List<String> genres = item.getGenres();
-                movie.genre = "";
-                if (genres.size() > 0) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (String genre : genres) {
-                        if (stringBuilder.length() > 0) {
-                            stringBuilder.append(", ");
-                        }
-                        stringBuilder.append(StringUtils.capWords(genre));
-                    }
-                    movie.genre = stringBuilder.toString();
-                }
-
-                movie.rating = Double.toString(item.getRating().getPercentage() / 10);
-                movie.trailer = item.getTrailer();
-                movie.runtime = item.getRuntime();
-                movie.synopsis = item.getSynopsis();
-                movie.certification = item.getCertification();
-
-                if(!item.getImages().getPoster().contains("images/posterholder.png")) {
-                    movie.image = item.getImages().getPoster().replace("/original/", "/medium/");
-                    movie.fullImage = item.getImages().getPoster();
-                    movie.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
-                }
-
-                if (item.getTorrents() != null) {
-                    for (Map.Entry<String, Language> language : item.getTorrents().getLanguages().entrySet()) {
-                        Map<String, Media.Torrent> torrentMap = new HashMap<>();
-                        for (Map.Entry<String, Quality> torrentQuality : language.getValue().getQualities().entrySet()) {
-                            if (torrentQuality == null) continue;
-                            Media.Torrent torrent = new Media.Torrent();
-                            torrent.seeds = torrentQuality.getValue().getSeed();
-                            torrent.peers = torrentQuality.getValue().getPeer();
-                            torrent.url = torrentQuality.getValue().getUrl();
-
-                            torrentMap.put(torrentQuality.getKey(), torrent);
-                        }
-                        movie.torrents.put(language.getKey(), torrentMap);
-                    }
-                }
-
-                existingList.add(movie);
-            }
-            return existingList;
-        }
-    }
-
 }

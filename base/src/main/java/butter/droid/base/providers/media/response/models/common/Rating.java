@@ -1,17 +1,15 @@
-package butter.droid.base.providers.media.models.response.movies;
+package butter.droid.base.providers.media.response.models.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Rating {
 
     @JsonProperty("percentage")
     private int percentage;
-    @SerializedName("watching")
+    @JsonProperty("watching")
     private int watching;
     @JsonProperty("votes")
     private int votes;
@@ -23,6 +21,7 @@ public class Rating {
     /**
      * @return The percentage
      */
+    @JsonProperty("percentage")
     public int getPercentage() {
         return percentage;
     }
@@ -30,6 +29,7 @@ public class Rating {
     /**
      * @param percentage The percentage
      */
+    @JsonProperty("percentage")
     public void setPercentage(int percentage) {
         this.percentage = percentage;
     }
@@ -37,6 +37,7 @@ public class Rating {
     /**
      * @return The watching
      */
+    @JsonProperty("watching")
     public int getWatching() {
         return watching;
     }
@@ -44,6 +45,7 @@ public class Rating {
     /**
      * @param watching The watching
      */
+    @JsonProperty("watching")
     public void setWatching(int watching) {
         this.watching = watching;
     }
@@ -51,6 +53,7 @@ public class Rating {
     /**
      * @return The votes
      */
+    @JsonProperty("votes")
     public int getVotes() {
         return votes;
     }
@@ -58,6 +61,7 @@ public class Rating {
     /**
      * @param votes The votes
      */
+    @JsonProperty("votes")
     public void setVotes(int votes) {
         this.votes = votes;
     }
@@ -65,6 +69,7 @@ public class Rating {
     /**
      * @return The loved
      */
+    @JsonProperty("loved")
     public int getLoved() {
         return loved;
     }
@@ -72,6 +77,7 @@ public class Rating {
     /**
      * @param loved The loved
      */
+    @JsonProperty("loved")
     public void setLoved(int loved) {
         this.loved = loved;
     }
@@ -79,6 +85,7 @@ public class Rating {
     /**
      * @return The hated
      */
+    @JsonProperty("hated")
     public int getHated() {
         return hated;
     }
@@ -86,6 +93,7 @@ public class Rating {
     /**
      * @param hated The hated
      */
+    @JsonProperty("hated")
     public void setHated(int hated) {
         this.hated = hated;
     }

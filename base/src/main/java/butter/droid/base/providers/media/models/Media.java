@@ -28,6 +28,18 @@ import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.subs.SubsProvider;
 
 public class Media implements Parcelable {
+    @SuppressWarnings("unused")
+    public static final Creator<Media> CREATOR = new Creator<Media>() {
+        @Override
+        public Media createFromParcel(Parcel in) {
+            return new Media(in);
+        }
+
+        @Override
+        public Media[] newArray(int size) {
+            return new Media[size];
+        }
+    };
     public String videoId;
     public String imdbId;
     public String title;
@@ -115,7 +127,7 @@ public class Media implements Parcelable {
         dest.writeString(mMediaProvider != null ? mMediaProvider.getClass().getCanonicalName() : "");
         if (subtitles != null) {
             dest.writeInt(subtitles.size());
-            for (Map.Entry<String, String> entry : subtitles.entrySet()){
+            for (Map.Entry<String, String> entry : subtitles.entrySet()) {
                 dest.writeString(entry.getKey());
                 dest.writeString(entry.getValue());
             }
@@ -124,20 +136,27 @@ public class Media implements Parcelable {
         }
     }
 
-    @SuppressWarnings("unused")
-    public static final Creator<Media> CREATOR = new Creator<Media>() {
-        @Override
-        public Media createFromParcel(Parcel in) {
-            return new Media(in);
-        }
+    public SubsProvider getSubsProvider() {
+        return mSubsProvider;
+    }
 
-        @Override
-        public Media[] newArray(int size) {
-            return new Media[size];
-        }
-    };
+    public MediaProvider getMediaProvider() {
+        return mMediaProvider;
+    }
 
     public static class Torrent implements Parcelable {
+        @SuppressWarnings("unused")
+        public static final Creator<Torrent> CREATOR = new Creator<Torrent>() {
+            @Override
+            public Torrent createFromParcel(Parcel in) {
+                return new Torrent(in);
+            }
+
+            @Override
+            public Torrent[] newArray(int size) {
+                return new Torrent[size];
+            }
+        };
         public String url;
         public Integer seeds;
         public Integer peers;
@@ -173,27 +192,6 @@ public class Media implements Parcelable {
             dest.writeInt(peers);
             dest.writeString(hash);
         }
-
-        @SuppressWarnings("unused")
-        public static final Creator<Torrent> CREATOR = new Creator<Torrent>() {
-            @Override
-            public Torrent createFromParcel(Parcel in) {
-                return new Torrent(in);
-            }
-
-            @Override
-            public Torrent[] newArray(int size) {
-                return new Torrent[size];
-            }
-        };
-    }
-
-    public SubsProvider getSubsProvider() {
-        return mSubsProvider;
-    }
-
-    public MediaProvider getMediaProvider() {
-        return mMediaProvider;
     }
 
 }

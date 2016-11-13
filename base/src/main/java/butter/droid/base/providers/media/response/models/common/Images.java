@@ -1,11 +1,10 @@
-package butter.droid.base.providers.media.models.response.movies;
+package butter.droid.base.providers.media.response.models.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class Images {
 
     @JsonProperty("poster")
@@ -18,6 +17,7 @@ public class Images {
     /**
      * @return The poster
      */
+    @JsonProperty("poster")
     public String getPoster() {
         return poster;
     }
@@ -25,6 +25,7 @@ public class Images {
     /**
      * @param poster The poster
      */
+    @JsonProperty("poster")
     public void setPoster(String poster) {
         this.poster = poster;
     }
@@ -32,6 +33,7 @@ public class Images {
     /**
      * @return The fanart
      */
+    @JsonProperty("fanart")
     public String getFanart() {
         return fanart;
     }
@@ -39,6 +41,7 @@ public class Images {
     /**
      * @param fanart The fanart
      */
+    @JsonProperty("fanart")
     public void setFanart(String fanart) {
         this.fanart = fanart;
     }
@@ -46,6 +49,7 @@ public class Images {
     /**
      * @return The banner
      */
+    @JsonProperty("banner")
     public String getBanner() {
         return banner;
     }
@@ -53,6 +57,7 @@ public class Images {
     /**
      * @param banner The banner
      */
+    @JsonProperty("banner")
     public void setBanner(String banner) {
         this.banner = banner;
     }

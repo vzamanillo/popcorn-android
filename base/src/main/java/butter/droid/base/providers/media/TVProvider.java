@@ -19,7 +19,7 @@ package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
 
-import com.google.gson.internal.LinkedTreeMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -27,32 +27,29 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
-import butter.droid.base.providers.media.models.Episode;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
-import butter.droid.base.providers.media.models.Show;
+import butter.droid.base.providers.media.response.TVDetailsReponse;
+import butter.droid.base.providers.media.response.TVResponse;
+import butter.droid.base.providers.media.response.models.shows.ShowDetails;
 import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.meta.TraktProvider;
 import butter.droid.base.providers.subs.OpenSubsProvider;
 import butter.droid.base.providers.subs.SubsProvider;
-import butter.droid.base.utils.StringUtils;
 import timber.log.Timber;
 
 public class TVProvider extends MediaProvider {
 
-    private static Integer CURRENT_API = 0;
     private static final String[] API_URLS = BuildConfig.TV_URLS;
     private static final SubsProvider sSubsProvider = new OpenSubsProvider();
     private static final MetaProvider sMetaProvider = new TraktProvider();
     private static final MediaProvider sMediaProvider = new TVProvider();
+    private static Integer CURRENT_API = 0;
 
     @Override
     public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
@@ -60,28 +57,28 @@ public class TVProvider extends MediaProvider {
         if (existingList == null) {
             currentList = new ArrayList<>();
         } else {
-            currentList = (ArrayList<Media>) existingList.clone();
+            currentList = new ArrayList<>(existingList);
         }
 
         ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
-        params.add(new AbstractMap.SimpleEntry<String, String>("limit", "30"));
+        params.add(new AbstractMap.SimpleEntry<>("limit", "30"));
 
         if (filters == null) {
             filters = new Filters();
         }
 
         if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("keywords", filters.keywords));
+            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
         }
 
         if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("genre", filters.genre));
+            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
         }
 
         if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<String, String>("order", "1"));
+            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
         } else {
-            params.add(new AbstractMap.SimpleEntry<String, String>("order", "-1"));
+            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
         }
 
         String sort;
@@ -107,7 +104,7 @@ public class TVProvider extends MediaProvider {
                 break;
         }
 
-        params.add(new AbstractMap.SimpleEntry<String, String>("sort", sort));
+        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
 
         String url = API_URLS[CURRENT_API] + "shows/";
         if (filters.page != null) {
@@ -143,7 +140,7 @@ public class TVProvider extends MediaProvider {
                 if (CURRENT_API >= API_URLS.length - 1) {
                     callback.onFailure(e);
                 } else {
-                    if(url.contains(API_URLS[CURRENT_API])) {
+                    if (url.contains(API_URLS[CURRENT_API])) {
                         url = url.replace(API_URLS[CURRENT_API], API_URLS[CURRENT_API + 1]);
                         CURRENT_API++;
                     } else {
@@ -158,20 +155,19 @@ public class TVProvider extends MediaProvider {
             public void onResponse(Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
+
                         String responseStr = response.body().string();
 
-                        ArrayList<LinkedTreeMap<String, Object>> list;
                         if (responseStr.isEmpty()) {
-                            list = new ArrayList<>();
-                        } else {
-                            list = (ArrayList<LinkedTreeMap<String, Object>>) mGson.fromJson(responseStr, ArrayList.class);
+                            callback.onFailure(new NetworkErrorException("Empty response"));
                         }
 
-                        TVReponse result = new TVReponse(list);
-                        if (list == null) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        } else {
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList);
+                        ObjectMapper mapper = new ObjectMapper();
+                        List<butter.droid.base.providers.media.response.models.shows.Show> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.shows.Show.class));
+
+                        if (!list.isEmpty()) {
+                            TVResponse result = new TVResponse(list);
+                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, sMediaProvider, sSubsProvider);
                             callback.onSuccess(filters, formattedData, list.size() > 0);
                             return;
                         }
@@ -201,22 +197,31 @@ public class TVProvider extends MediaProvider {
 
             @Override
             public void onResponse(Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseStr = response.body().string();
-                    LinkedTreeMap<String, Object> map = mGson.fromJson(responseStr, LinkedTreeMap.class);
-                    TVReponse result = new TVReponse(map);
-                    if (map == null) {
-                        callback.onFailure(new NetworkErrorException("Empty response"));
-                    } else {
-                        ArrayList<Media> formattedData = result.formatDetailForPopcorn();
+                try {
+                    if (response.isSuccessful()) {
 
-                        if (formattedData.size() > 0) {
-                            callback.onSuccess(null, formattedData, true);
+                        String responseStr = response.body().string();
+
+                        if (responseStr.isEmpty()) {
+                            callback.onFailure(new NetworkErrorException("Empty response"));
+                        }
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        ShowDetails detail = mapper.readValue(responseStr, ShowDetails.class);
+
+                        if (detail != null) {
+                            TVDetailsReponse result = new TVDetailsReponse();
+                            ArrayList<Media> formattedData = result.formatDetailForPopcorn(detail, sMediaProvider, sSubsProvider, sMetaProvider);
+                            if (formattedData.size() > 0) {
+                                callback.onSuccess(null, formattedData, true);
+                                return;
+                            }
+                            callback.onFailure(new IllegalStateException("Empty list"));
                             return;
                         }
-                        callback.onFailure(new IllegalStateException("Empty list"));
-                        return;
                     }
+                } catch (Exception e) {
+                    callback.onFailure(e);
                 }
                 callback.onFailure(new NetworkErrorException("Couldn't connect to TVAPI"));
             }
@@ -232,12 +237,12 @@ public class TVProvider extends MediaProvider {
     public List<NavInfo> getNavigation() {
         List<NavInfo> tabs = new ArrayList<>();
 
-        tabs.add(new NavInfo(R.id.tvshow_filter_trending,Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending),R.drawable.tvshow_filter_trending));
-        tabs.add(new NavInfo(R.id.tvshow_filter_popular_now,Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular),R.drawable.tvshow_filter_popular_now));
-        tabs.add(new NavInfo(R.id.tvshow_filter_top_rated,Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated),R.drawable.tvshow_filter_top_rated));
-        tabs.add(new NavInfo(R.id.tvshow_filter_last_updated,Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.last_updated),R.drawable.tvshow_filter_last_updated));
-        tabs.add(new NavInfo(R.id.tvshow_filter_year,Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year),R.drawable.tvshow_filter_year));
-        tabs.add(new NavInfo(R.id.tvshow_filter_a_to_z,Filters.Sort.ALPHABET, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.a_to_z),R.drawable.tvshow_filter_a_to_z));
+        tabs.add(new NavInfo(R.id.tvshow_filter_trending, Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending), R.drawable.tvshow_filter_trending));
+        tabs.add(new NavInfo(R.id.tvshow_filter_popular_now, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.tvshow_filter_popular_now));
+        tabs.add(new NavInfo(R.id.tvshow_filter_top_rated, Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated), R.drawable.tvshow_filter_top_rated));
+        tabs.add(new NavInfo(R.id.tvshow_filter_last_updated, Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.last_updated), R.drawable.tvshow_filter_last_updated));
+        tabs.add(new NavInfo(R.id.tvshow_filter_year, Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year), R.drawable.tvshow_filter_year));
+        tabs.add(new NavInfo(R.id.tvshow_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.tvshow_filter_a_to_z));
         return tabs;
     }
 
@@ -276,140 +281,4 @@ public class TVProvider extends MediaProvider {
         returnList.add(new Genre("western", R.string.genre_western));
         return returnList;
     }
-
-    static private class TVReponse {
-        LinkedTreeMap<String, Object> showData;
-        ArrayList<LinkedTreeMap<String, Object>> showsList;
-
-        public TVReponse(LinkedTreeMap<String, Object> showData) {
-            this.showData = showData;
-        }
-
-        public ArrayList<Media> formatDetailForPopcorn() {
-            ArrayList<Media> list = new ArrayList<>();
-            try {
-                Show show = new Show(sMediaProvider, sSubsProvider);
-
-                show.title = (String) showData.get("title");
-                show.videoId = (String) showData.get("imdb_id");
-                show.imdbId = (String) showData.get("imdb_id");
-                show.tvdbId = (String) showData.get("tvdb_id");
-                show.seasons = ((Double) showData.get("num_seasons")).intValue();
-                show.year = (String) showData.get("year");
-                LinkedTreeMap<String, String> images = (LinkedTreeMap<String, String>) showData.get("images");
-                if(!images.get("poster").contains("images/posterholder.png")) {
-                    show.image = images.get("poster").replace("/original/", "/medium/");
-                    show.fullImage = images.get("poster");
-                }
-                if(!images.get("poster").contains("images/posterholder.png"))
-                    show.headerImage = images.get("fanart").replace("/original/", "/medium/");
-
-                if (showData.get("status") != null) {
-                    String status = (String) showData.get("status");
-                    if (status.equalsIgnoreCase("ended")) {
-                        show.status = Show.Status.ENDED;
-                    } else if (status.equalsIgnoreCase("returning series")) {
-                        show.status = Show.Status.CONTINUING;
-                    } else if (status.equalsIgnoreCase("in production")) {
-                        show.status = Show.Status.CONTINUING;
-                    } else if (status.equalsIgnoreCase("canceled")) {
-                        show.status = Show.Status.CANCELED;
-                    }
-                }
-
-                show.country = (String) showData.get("country");
-                show.network = (String) showData.get("network");
-                show.synopsis = (String) showData.get("synopsis");
-                show.runtime = (String) showData.get("runtime");
-                show.airDay = (String) showData.get("air_day");
-                show.airTime = (String) showData.get("air_time");
-                show.rating = Double.toString(((LinkedTreeMap<String, Double>) showData.get("rating")).get("percentage") / 10);
-
-                List<String> genres = (ArrayList<String>) showData.get("genres");
-
-                show.genre = "";
-                if (genres.size() > 0) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (String genre : genres) {
-                        if (stringBuilder.length() > 0) {
-                            stringBuilder.append(", ");
-                        }
-                        stringBuilder.append(StringUtils.capWords(genre));
-                    }
-                    show.genre = stringBuilder.toString();
-                }
-
-                ArrayList<LinkedTreeMap<String, Object>> episodes = (ArrayList<LinkedTreeMap<String, Object>>) showData.get("episodes");
-                Set<String> episodeSet = new HashSet<>();
-                for (LinkedTreeMap<String, Object> episode : episodes) {
-                    try {
-                        String episodeStr = String.format(Locale.US, "S%dE%d", ((Double) episode.get("season")).intValue(), ((Double) episode.get("episode")).intValue());
-                        if(episodeSet.contains(episodeStr))
-                            continue;
-                        episodeSet.add(episodeStr);
-
-                        Episode episodeObject = new Episode(sMediaProvider, sSubsProvider, sMetaProvider);
-                        LinkedTreeMap<String, LinkedTreeMap<String, Object>> torrents =
-                                (LinkedTreeMap<String, LinkedTreeMap<String, Object>>) episode.get("torrents");
-                        for (String key : torrents.keySet()) {
-                            if (!key.equals("0")) {
-                                LinkedTreeMap<String, Object> item = torrents.get(key);
-                                Media.Torrent torrent = new Media.Torrent();
-                                torrent.url = item.get("url").toString();
-                                torrent.seeds = ((Double) item.get("seeds")).intValue();
-                                torrent.peers = ((Double) item.get("peers")).intValue();
-                                episodeObject.torrents.put(key, torrent);
-                            }
-                        }
-
-                        episodeObject.showName = show.title;
-                        episodeObject.dateBased = (Boolean) episode.get("date_based");
-                        episodeObject.aired = ((Double) episode.get("first_aired")).intValue();
-                        episodeObject.title = (String) episode.get("title");
-                        episodeObject.overview = (String) episode.get("overview");
-                        episodeObject.season = ((Double) episode.get("season")).intValue();
-                        episodeObject.episode = ((Double) episode.get("episode")).intValue();
-                        episodeObject.videoId = show.videoId + episodeObject.season + episodeObject.episode;
-                        episodeObject.imdbId = show.imdbId;
-                        episodeObject.image = episodeObject.fullImage = episodeObject.headerImage = show.headerImage;
-
-                        show.episodes.add(episodeObject);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                list.add(show);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return list;
-        }
-
-        public TVReponse(ArrayList<LinkedTreeMap<String, Object>> showsList) {
-            this.showsList = showsList;
-        }
-
-        public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList) {
-            for (LinkedTreeMap<String, Object> item : showsList) {
-                Show show = new Show(sMediaProvider, sSubsProvider);
-
-                show.title = (String) item.get("title");
-                show.videoId = (String) item.get("imdb_id");
-                show.seasons = (Integer) item.get("seasons");
-                show.tvdbId = (String) item.get("tvdb_id");
-                show.year = (String) item.get("year");
-                LinkedTreeMap<String, String> images = (LinkedTreeMap<String, String>) item.get("images");
-                if(!images.get("poster").contains("images/posterholder.png"))
-                    show.image = images.get("poster").replace("/original/", "/medium/");
-                if(!images.get("poster").contains("images/posterholder.png"))
-                    show.headerImage = images.get("fanart").replace("/original/", "/medium/");
-
-                existingList.add(show);
-            }
-            return existingList;
-        }
-    }
-
 }

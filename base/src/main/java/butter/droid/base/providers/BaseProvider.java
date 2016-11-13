@@ -19,7 +19,7 @@ package butter.droid.base.providers;
 
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -42,7 +42,7 @@ import butter.droid.base.providers.subs.SubsProvider;
  */
 public abstract class BaseProvider {
 
-    protected Gson mGson = new Gson();
+    protected ObjectMapper mapper = new ObjectMapper();
 
     private OkHttpClient getClient() {
         return ButterApplication.getHttpClient();

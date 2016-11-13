@@ -28,15 +28,26 @@ import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.subs.SubsProvider;
 
 public class Episode extends Media implements Parcelable {
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Episode> CREATOR = new Parcelable.Creator<Episode>() {
+        @Override
+        public Episode createFromParcel(Parcel in) {
+            return new Episode(in);
+        }
+
+        @Override
+        public Episode[] newArray(int size) {
+            return new Episode[size];
+        }
+    };
     public String showName;
     public int aired;
     public int episode;
     public int season;
     public String overview;
-    private String tvdbId;
     public boolean dateBased;
     public Map<String, Torrent> torrents = new HashMap<>();
-
+    private String tvdbId;
     private MetaProvider mMetaProvider;
 
     public Episode(MediaProvider mediaProvider, SubsProvider subsProvider, MetaProvider metaProvider) {
@@ -95,7 +106,7 @@ public class Episode extends Media implements Parcelable {
         dest.writeString(mMetaProvider != null ? mMetaProvider.getClass().getCanonicalName() : "");
         if (torrents != null) {
             dest.writeInt(torrents.size());
-            for (Map.Entry<String, Torrent> entry : torrents.entrySet()){
+            for (Map.Entry<String, Torrent> entry : torrents.entrySet()) {
                 dest.writeString(entry.getKey());
                 dest.writeParcelable(entry.getValue(), flags);
             }
@@ -103,19 +114,6 @@ public class Episode extends Media implements Parcelable {
             dest.writeInt(0);
         }
     }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Episode> CREATOR = new Parcelable.Creator<Episode>() {
-        @Override
-        public Episode createFromParcel(Parcel in) {
-            return new Episode(in);
-        }
-
-        @Override
-        public Episode[] newArray(int size) {
-            return new Episode[size];
-        }
-    };
 
     public MetaProvider getMetaProvider() {
         return mMetaProvider;

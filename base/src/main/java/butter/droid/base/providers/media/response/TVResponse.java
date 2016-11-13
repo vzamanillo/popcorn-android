@@ -1,0 +1,35 @@
+package butter.droid.base.providers.media.response;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.providers.media.models.Media;
+import butter.droid.base.providers.media.response.models.Response;
+import butter.droid.base.providers.media.response.models.shows.Show;
+import butter.droid.base.providers.subs.SubsProvider;
+
+public class TVResponse extends Response<Show> {
+
+    public TVResponse(List<Show> responseItems) {
+        super(responseItems);
+    }
+
+    public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList, MediaProvider mediaProvider, SubsProvider subsProvider) {
+        for (Show item : responseItems) {
+            butter.droid.base.providers.media.models.Show show = new butter.droid.base.providers.media.models.Show(mediaProvider, subsProvider);
+
+            show.title = item.getTitle();
+            show.videoId = item.getImdbId();
+            show.seasons = item.getNumSeasons();
+            show.tvdbId = item.getTvdbId();
+            show.year = item.getYear();
+            if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+                show.image = item.getImages().getPoster().replace("/original/", "/medium/");
+                show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
+            }
+            existingList.add(show);
+        }
+        return existingList;
+    }
+}

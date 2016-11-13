@@ -117,13 +117,14 @@ public class YSubsProvider extends SubsProvider {
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseStr = response.body().string();
-                    YSubsResponse result = mGson.fromJson(responseStr, YSubsResponse.class);
+                    YSubsResponse result = mapper.readValue(responseStr, YSubsResponse.class);
                     callback.onSuccess(result.formatForPopcorn(PREFIX, LANGUAGE_MAPPING).get(media.imdbId));
                 }
             }
         });
     }
 
+    // TODO move to responses equals to other providers
     private class YSubsResponse {
         public boolean success;
         public int subtitles;

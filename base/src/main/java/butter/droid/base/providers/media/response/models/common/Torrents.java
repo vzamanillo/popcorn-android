@@ -1,4 +1,4 @@
-package butter.droid.base.providers.media.models.response.movies;
+package butter.droid.base.providers.media.response.models.common;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Language {
+
+public class Torrents {
 
     public Map<String, Quality> qualities = new HashMap<>();
 
@@ -18,8 +19,7 @@ public class Language {
     }
 
     @JsonAnySetter
-    public void setQualities(String name, Quality value) {
+    public void setLanguages(String name, Quality value) {
         qualities.put(name, value);
-
     }
 }

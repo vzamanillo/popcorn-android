@@ -148,10 +148,9 @@ public class OpenSubsProvider extends SubsProvider {
     }
 
     /**
-     *
-     * @param episode Episode
-     * @param token Login token
-     * @param callback  XML RPC callback callback
+     * @param episode  Episode
+     * @param token    Login token
+     * @param callback XML RPC callback callback
      */
     private void search(Episode episode, String token, XMLRPCCallback callback) {
         try {

@@ -39,6 +39,30 @@ import butter.droid.base.providers.media.models.Media;
 public abstract class MediaProvider extends BaseProvider implements Parcelable {
     public static final String MEDIA_CALL = "media_http_call";
     public static final int DEFAULT_NAVIGATION_INDEX = 1;
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<MediaProvider> CREATOR = new Parcelable.Creator<MediaProvider>() {
+        @Override
+        public MediaProvider createFromParcel(Parcel in) {
+            String className = in.readString();
+            MediaProvider provider = null;
+            try {
+                Class<?> clazz = Class.forName(className);
+                provider = (MediaProvider) clazz.newInstance();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return provider;
+        }
+
+        @Override
+        public MediaProvider[] newArray(int size) {
+            return null;
+        }
+    };
 
     /**
      * Get a list of Media items from the provider
@@ -74,6 +98,17 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         return new ArrayList<>();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        String className = getClass().getCanonicalName();
+        dest.writeString(className);
+    }
+
     public interface Callback {
         void onSuccess(Filters filters, ArrayList<Media> items, boolean changed);
 
@@ -81,10 +116,6 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
     }
 
     public static class Filters {
-        public enum Order {ASC, DESC}
-
-        public enum Sort {POPULARITY, YEAR, DATE, RATING, ALPHABET, TRENDING}
-
         public String keywords = null;
         public String genre = null;
         public Order order = Order.DESC;
@@ -92,7 +123,8 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         public Integer page = null;
         public String langCode = "en";
 
-        public Filters() { }
+        public Filters() {
+        }
 
         public Filters(Filters filters) {
             keywords = filters.keywords;
@@ -102,6 +134,10 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
             page = filters.page;
             langCode = filters.langCode;
         }
+
+        public enum Order {ASC, DESC}
+
+        public enum Sort {POPULARITY, YEAR, DATE, RATING, ALPHABET, TRENDING}
     }
 
     public static class NavInfo {
@@ -111,7 +147,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         private Filters.Order mDefOrder;
         private String mLabel;
 
-        public NavInfo(int id,Filters.Sort sort, Filters.Order defOrder, String label,@Nullable @DrawableRes Integer icon) {
+        public NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @Nullable @DrawableRes Integer icon) {
             mId = id;
             mSort = sort;
             mDefOrder = defOrder;
@@ -140,41 +176,5 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
             return mLabel;
         }
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        String className = getClass().getCanonicalName();
-        dest.writeString(className);
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<MediaProvider> CREATOR = new Parcelable.Creator<MediaProvider>() {
-        @Override
-        public MediaProvider createFromParcel(Parcel in) {
-            String className = in.readString();
-            MediaProvider provider = null;
-            try {
-                Class<?> clazz = Class.forName(className);
-                provider = (MediaProvider) clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            return provider;
-        }
-
-        @Override
-        public MediaProvider[] newArray(int size) {
-            return null;
-        }
-    };
 
 }
