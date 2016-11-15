@@ -21,7 +21,6 @@ import android.accounts.NetworkErrorException;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Request;
@@ -341,7 +340,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         private Filters.Order mDefOrder;
         private String mLabel;
 
-        NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @Nullable @DrawableRes int icon) {
+        NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @DrawableRes int icon) {
             mId = id;
             mSort = sort;
             mDefOrder = defOrder;
