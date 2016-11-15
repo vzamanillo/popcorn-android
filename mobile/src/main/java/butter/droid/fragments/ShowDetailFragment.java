@@ -39,6 +39,7 @@ import butter.droid.widget.WrappingViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Optional;
 
 public class ShowDetailFragment extends BaseDetailFragment {
 
@@ -222,7 +223,7 @@ public class ShowDetailFragment extends BaseDetailFragment {
         mActivity.setSubScrollListener(null);
     }
 
-    @Nullable
+    @Optional
     @OnClick(R.id.read_more)
     public void openReadMore(View v) {
         if (getFragmentManager().findFragmentByTag("overlay_fragment") != null)
