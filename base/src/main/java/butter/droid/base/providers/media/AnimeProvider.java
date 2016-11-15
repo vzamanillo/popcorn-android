@@ -17,16 +17,7 @@
 
 package butter.droid.base.providers.media;
 
-import android.accounts.NetworkErrorException;
-import android.annotation.SuppressLint;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,185 +28,30 @@ import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.AnimeDetailsReponse;
 import butter.droid.base.providers.media.response.AnimeResponse;
+import butter.droid.base.providers.media.response.models.anime.Anime;
 import butter.droid.base.providers.media.response.models.anime.AnimeDetails;
-import timber.log.Timber;
+import butter.droid.base.providers.subs.YSubsProvider;
 
-@SuppressLint("ParcelCreator")
 public class AnimeProvider extends MediaProvider {
 
-    private static final String[] API_URLS = BuildConfig.ANIME_URLS;
-    private static final MediaProvider sMediaProvider = new AnimeProvider();
-    private static Integer CURRENT_API = 0;
-
-    @Override
-    public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
-        final ArrayList<Media> currentList;
-        if (existingList == null) {
-            currentList = new ArrayList<>();
-        } else {
-            currentList = new ArrayList<>(existingList);
-        }
-
-        ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
-        params.add(new AbstractMap.SimpleEntry<>("limit", "30"));
-
-        if (filters == null) {
-            filters = new Filters();
-        }
-
-        if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
-        }
-
-        if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
-        }
-
-        if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
-        } else {
-            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
-        }
-
-        String sort;
-        switch (filters.sort) {
-            default:
-            case POPULARITY:
-                sort = "popularity";
-                break;
-            case YEAR:
-                sort = "year";
-                break;
-            case RATING:
-                sort = "rating";
-                break;
-            case ALPHABET:
-                sort = "name";
-                break;
-        }
-
-        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
-
-        String url = API_URLS[CURRENT_API] + "animes/";
-        if (filters.page != null) {
-            url += filters.page;
-        } else {
-            url += "1";
-        }
-
-        Request.Builder requestBuilder = new Request.Builder();
-        String query = buildQuery(params);
-        url = url + "?" + query;
-        requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
-
-        Timber.d("AnimeProvider", "Making request to: " + url);
-
-        return fetchList(currentList, requestBuilder, filters, callback);
-    }
-
-    /**
-     * Fetch the list of movies from Haruhichan
-     *
-     * @param currentList    Current shown list to be extended
-     * @param requestBuilder Request to be executed
-     * @param callback       Network callback
-     * @return Call
-     */
-    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final Callback callback) {
-        return enqueue(requestBuilder.build(), new com.squareup.okhttp.Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                String url = requestBuilder.build().urlString();
-                if (CURRENT_API >= API_URLS.length - 1) {
-                    callback.onFailure(e);
-                } else {
-                    if (url.contains(API_URLS[CURRENT_API])) {
-                        url = url.replace(API_URLS[CURRENT_API], API_URLS[CURRENT_API + 1]);
-                        CURRENT_API++;
-                    } else {
-                        url = url.replace(API_URLS[CURRENT_API - 1], API_URLS[CURRENT_API]);
-                    }
-                    requestBuilder.url(url);
-                    fetchList(currentList, requestBuilder, filters, callback);
-                }
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-
-                        String responseStr = response.body().string();
-
-                        if (responseStr.isEmpty()) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        List<butter.droid.base.providers.media.response.models.anime.Anime> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.anime.Anime.class));
-
-                        if (!list.isEmpty()) {
-                            AnimeResponse result = new AnimeResponse(list);
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, sMediaProvider, null);
-                            callback.onSuccess(filters, formattedData, list.size() > 0);
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to AnimeAPI"));
-            }
-        });
+    public AnimeProvider() {
+        super(BuildConfig.ANIME_URLS, "animes/", "anime/", 0);
     }
 
     @Override
-    public Call getDetail(ArrayList<Media> currentList, Integer index, final Callback callback) {
-        Request.Builder requestBuilder = new Request.Builder();
-        String url = API_URLS[CURRENT_API] + "anime/" + currentList.get(index).videoId;
-        requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
+    public ArrayList<Media> getResponseFormattedList(String responseStr, ArrayList<Media> currentList) throws IOException {
+        ArrayList<Media> formattedData = currentList;
+        List<Anime> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, Anime.class));
+        if (!list.isEmpty()) {
+            formattedData = new AnimeResponse(list).formatListForPopcorn(currentList, this, new YSubsProvider());
+        }
+        return formattedData;
+    }
 
-        Timber.d("AnimeProvider", "Making request to: " + url);
-
-        return enqueue(requestBuilder.build(), new com.squareup.okhttp.Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-
-                        String responseStr = response.body().string();
-
-                        if (responseStr.isEmpty()) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        AnimeDetails detail = mapper.readValue(responseStr, AnimeDetails.class);
-
-                        if (detail != null) {
-                            AnimeDetailsReponse result = new AnimeDetailsReponse();
-                            ArrayList<Media> formattedData = result.formatDetailForPopcorn(detail, sMediaProvider, null, null);
-                            if (formattedData.size() > 0) {
-                                callback.onSuccess(null, formattedData, true);
-                                return;
-                            }
-                            callback.onFailure(new IllegalStateException("Empty list"));
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to AnimeAPI"));
-            }
-        });
+    @Override
+    public ArrayList<Media> getResponseDetailsFormattedList(String responseStr) throws IOException {
+        AnimeDetails detail = mapper.readValue(responseStr, AnimeDetails.class);
+        return new AnimeDetailsReponse().formatDetailForPopcorn(detail, this, null, null);
     }
 
     @Override

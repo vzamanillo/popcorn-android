@@ -17,15 +17,9 @@
 
 package butter.droid.base.providers.media;
 
-import android.accounts.NetworkErrorException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,148 +29,23 @@ import butter.droid.base.R;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.MovieResponse;
-import butter.droid.base.providers.subs.SubsProvider;
+import butter.droid.base.providers.media.response.models.movies.Movie;
 import butter.droid.base.providers.subs.YSubsProvider;
-import timber.log.Timber;
 
 public class MoviesProvider extends MediaProvider {
 
-    private static final String[] API_URLS = BuildConfig.MOVIE_URLS;
-    private static final MoviesProvider sMediaProvider = new MoviesProvider();
-    private static final SubsProvider sSubsProvider = new YSubsProvider();
-    private static Integer CURRENT_API = 0;
-
-    @Override
-    public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
-        final ArrayList<Media> currentList;
-        if (existingList == null) {
-            currentList = new ArrayList<>();
-        } else {
-            currentList = new ArrayList<>(existingList);
-        }
-
-        ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
-        params.add(new AbstractMap.SimpleEntry<>("limit", "30"));
-
-        if (filters == null) {
-            filters = new Filters();
-        }
-
-        if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
-        }
-
-        if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
-        }
-
-        if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
-        } else {
-            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
-        }
-
-        if (filters.langCode != null) {
-            params.add(new AbstractMap.SimpleEntry<>("lang", filters.langCode));
-        }
-
-        String sort;
-        switch (filters.sort) {
-            default:
-            case POPULARITY:
-                sort = "popularity";
-                break;
-            case YEAR:
-                sort = "year";
-                break;
-            case DATE:
-                sort = "last added";
-                break;
-            case RATING:
-                sort = "rating";
-                break;
-            case ALPHABET:
-                sort = "name";
-                break;
-            case TRENDING:
-                sort = "trending";
-                break;
-        }
-
-        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
-
-        String url = API_URLS[CURRENT_API] + "movies/";
-        if (filters.page != null) {
-            url += filters.page;
-        } else {
-            url += "1";
-        }
-
-        Request.Builder requestBuilder = new Request.Builder();
-        String query = buildQuery(params);
-        url = url + "?" + query;
-        requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
-
-        Timber.d("MoviesProvider", "Making request to: " + url);
-
-        return fetchList(currentList, requestBuilder, filters, callback);
+    public MoviesProvider() {
+        super(BuildConfig.MOVIE_URLS, "movies/", "", 0);
     }
 
-    /**
-     * Fetch the list of movies from API
-     *
-     * @param currentList    Current shown list to be extended
-     * @param requestBuilder Request to be executed
-     * @param callback       Network callback
-     * @return Call
-     */
-    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final Callback callback) {
-        return enqueue(requestBuilder.build(), new com.squareup.okhttp.Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                String url = requestBuilder.build().urlString();
-                if (CURRENT_API >= API_URLS.length - 1) {
-                    callback.onFailure(e);
-                } else {
-                    if (url.contains(API_URLS[CURRENT_API])) {
-                        url = url.replace(API_URLS[CURRENT_API], API_URLS[CURRENT_API + 1]);
-                        CURRENT_API++;
-                    } else {
-                        url = url.replace(API_URLS[CURRENT_API - 1], API_URLS[CURRENT_API]);
-                    }
-                    requestBuilder.url(url);
-                    fetchList(currentList, requestBuilder, filters, callback);
-                }
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-
-                        String responseStr = response.body().string();
-
-                        if (responseStr.isEmpty()) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        List<butter.droid.base.providers.media.response.models.movies.Movie> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.movies.Movie.class));
-
-                        if (!list.isEmpty()) {
-                            MovieResponse result = new MovieResponse(list);
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, sMediaProvider, sSubsProvider);
-                            callback.onSuccess(filters, formattedData, list.size() > 0);
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to MovieAPI"));
-            }
-        });
+    @Override
+    public ArrayList<Media> getResponseFormattedList(String responseStr, ArrayList<Media> currentList) throws IOException {
+        ArrayList<Media> formattedData = currentList;
+        List<Movie> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, Movie.class));
+        if (!list.isEmpty()) {
+            formattedData = new MovieResponse(list).formatListForPopcorn(currentList, this, new YSubsProvider());
+        }
+        return formattedData;
     }
 
     @Override

@@ -17,15 +17,7 @@
 
 package butter.droid.base.providers.media;
 
-import android.accounts.NetworkErrorException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,202 +33,35 @@ import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.meta.TraktProvider;
 import butter.droid.base.providers.subs.OpenSubsProvider;
 import butter.droid.base.providers.subs.SubsProvider;
-import timber.log.Timber;
 
 public class TVProvider extends MediaProvider {
 
-    private static final String[] API_URLS = BuildConfig.TV_URLS;
-    private static final SubsProvider sSubsProvider = new OpenSubsProvider();
-    private static final MetaProvider sMetaProvider = new TraktProvider();
-    private static final MediaProvider sMediaProvider = new TVProvider();
-    private static Integer CURRENT_API = 0;
+    private SubsProvider subsProvider = new OpenSubsProvider();
+    private MetaProvider metaProvider = new TraktProvider();
 
-    @Override
-    public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
-        final ArrayList<Media> currentList;
-        if (existingList == null) {
-            currentList = new ArrayList<>();
-        } else {
-            currentList = new ArrayList<>(existingList);
-        }
-
-        ArrayList<AbstractMap.SimpleEntry<String, String>> params = new ArrayList<>();
-        params.add(new AbstractMap.SimpleEntry<>("limit", "30"));
-
-        if (filters == null) {
-            filters = new Filters();
-        }
-
-        if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
-        }
-
-        if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
-        }
-
-        if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
-        } else {
-            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
-        }
-
-        String sort;
-        switch (filters.sort) {
-            default:
-            case POPULARITY:
-                sort = "popularity";
-                break;
-            case TRENDING:
-                sort = "trending";
-                break;
-            case YEAR:
-                sort = "year";
-                break;
-            case DATE:
-                sort = "updated";
-                break;
-            case RATING:
-                sort = "rating";
-                break;
-            case ALPHABET:
-                sort = "name";
-                break;
-        }
-
-        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
-
-        String url = API_URLS[CURRENT_API] + "shows/";
-        if (filters.page != null) {
-            url += filters.page;
-        } else {
-            url += "1";
-        }
-
-        Request.Builder requestBuilder = new Request.Builder();
-        String query = buildQuery(params);
-        url = url + "?" + query;
-        requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
-
-        Timber.d("TVProvider", "Making request to: " + url);
-
-        return fetchList(currentList, requestBuilder, filters, callback);
-    }
-
-    /**
-     * Fetch the list of movies from EZTV
-     *
-     * @param currentList    Current shown list to be extended
-     * @param requestBuilder Request to be executed
-     * @param callback       Network callback
-     * @return Call
-     */
-    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final Callback callback) {
-        return enqueue(requestBuilder.build(), new com.squareup.okhttp.Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                String url = requestBuilder.build().urlString();
-                if (CURRENT_API >= API_URLS.length - 1) {
-                    callback.onFailure(e);
-                } else {
-                    if (url.contains(API_URLS[CURRENT_API])) {
-                        url = url.replace(API_URLS[CURRENT_API], API_URLS[CURRENT_API + 1]);
-                        CURRENT_API++;
-                    } else {
-                        url = url.replace(API_URLS[CURRENT_API - 1], API_URLS[CURRENT_API]);
-                    }
-                    requestBuilder.url(url);
-                    fetchList(currentList, requestBuilder, filters, callback);
-                }
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-
-                        String responseStr = response.body().string();
-
-                        if (responseStr.isEmpty()) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        List<butter.droid.base.providers.media.response.models.shows.Show> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.shows.Show.class));
-
-                        if (!list.isEmpty()) {
-                            TVResponse result = new TVResponse(list);
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, sMediaProvider, sSubsProvider);
-                            callback.onSuccess(filters, formattedData, list.size() > 0);
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to TVAPI"));
-            }
-        });
+    public TVProvider() {
+        super(BuildConfig.TV_URLS, "shows/", "show/", 0);
     }
 
     @Override
-    public Call getDetail(ArrayList<Media> currentList, Integer index, final Callback callback) {
-        Request.Builder requestBuilder = new Request.Builder();
-        String url = API_URLS[CURRENT_API] + "show/" + currentList.get(index).videoId;
-        requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
-
-        Timber.d("TVProvider", "Making request to: " + url);
-
-        return enqueue(requestBuilder.build(), new com.squareup.okhttp.Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                callback.onFailure(e);
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-
-                        String responseStr = response.body().string();
-
-                        if (responseStr.isEmpty()) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        }
-
-                        ObjectMapper mapper = new ObjectMapper();
-                        ShowDetails detail = mapper.readValue(responseStr, ShowDetails.class);
-
-                        if (detail != null) {
-                            TVDetailsReponse result = new TVDetailsReponse();
-                            ArrayList<Media> formattedData = result.formatDetailForPopcorn(detail, sMediaProvider, sSubsProvider, sMetaProvider);
-                            if (formattedData.size() > 0) {
-                                callback.onSuccess(null, formattedData, true);
-                                return;
-                            }
-                            callback.onFailure(new IllegalStateException("Empty list"));
-                            return;
-                        }
-                    }
-                } catch (Exception e) {
-                    callback.onFailure(e);
-                }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to TVAPI"));
-            }
-        });
+    public ArrayList<Media> getResponseFormattedList(String responseStr, ArrayList<Media> currentList) throws IOException {
+        ArrayList<Media> formattedData = currentList;
+        List<butter.droid.base.providers.media.response.models.shows.Show> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.shows.Show.class));
+        if (!list.isEmpty()) {
+            formattedData = new TVResponse(list).formatListForPopcorn(currentList, this, subsProvider);
+        }
+        return formattedData;
     }
 
     @Override
-    public int getLoadingMessage() {
-        return R.string.loading_shows;
+    public ArrayList<Media> getResponseDetailsFormattedList(String responseStr) throws IOException {
+        ShowDetails detail = mapper.readValue(responseStr, ShowDetails.class);
+        return new TVDetailsReponse().formatDetailForPopcorn(detail, this, subsProvider, metaProvider);
     }
 
     @Override
     public List<NavInfo> getNavigation() {
         List<NavInfo> tabs = new ArrayList<>();
-
         tabs.add(new NavInfo(R.id.tvshow_filter_trending, Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending), R.drawable.tvshow_filter_trending));
         tabs.add(new NavInfo(R.id.tvshow_filter_popular_now, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.tvshow_filter_popular_now));
         tabs.add(new NavInfo(R.id.tvshow_filter_top_rated, Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated), R.drawable.tvshow_filter_top_rated));
@@ -245,6 +70,7 @@ public class TVProvider extends MediaProvider {
         tabs.add(new NavInfo(R.id.tvshow_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.tvshow_filter_a_to_z));
         return tabs;
     }
+
 
     @Override
     public List<Genre> getGenres() {
