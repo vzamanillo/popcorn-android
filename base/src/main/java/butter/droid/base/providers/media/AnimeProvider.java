@@ -30,9 +30,12 @@ import butter.droid.base.providers.media.response.AnimeDetailsReponse;
 import butter.droid.base.providers.media.response.AnimeResponse;
 import butter.droid.base.providers.media.response.models.anime.Anime;
 import butter.droid.base.providers.media.response.models.anime.AnimeDetails;
+import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.providers.subs.YSubsProvider;
 
 public class AnimeProvider extends MediaProvider {
+
+    private SubsProvider subsProvider = new YSubsProvider();
 
     public AnimeProvider() {
         super(BuildConfig.ANIME_URLS, "animes/", "anime/", 0);
@@ -43,7 +46,7 @@ public class AnimeProvider extends MediaProvider {
         ArrayList<Media> formattedData = currentList;
         List<Anime> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, Anime.class));
         if (!list.isEmpty()) {
-            formattedData = new AnimeResponse(list).formatListForPopcorn(currentList, this, new YSubsProvider());
+            formattedData = new AnimeResponse(list).formatListForPopcorn(currentList, this, subsProvider);
         }
         return formattedData;
     }
