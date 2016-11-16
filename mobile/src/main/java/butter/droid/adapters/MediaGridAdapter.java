@@ -49,11 +49,11 @@ import hugo.weaving.DebugLog;
 
 public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    final int NORMAL = 0, LOADING = 1;
     private int mItemWidth, mItemHeight, mMargin, mColumns;
     private ArrayList<OverviewItem> mItems = new ArrayList<>();
     //	private ArrayList<Media> mData = new ArrayList<>();
     private MediaGridAdapter.OnItemClickListener mItemClickListener;
-    final int NORMAL = 0, LOADING = 1;
 
     public MediaGridAdapter(Context context, ArrayList<Media> items, Integer columns) {
         mColumns = columns;
@@ -107,9 +107,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             videoViewHolder.year.setText(item.year);
 
             if (item.image != null && !item.image.equals("")) {
-                Picasso.with(videoViewHolder.coverImage.getContext()).load(item.image)
-                        .resize(mItemWidth, mItemHeight)
-                        .transform(DrawGradient.INSTANCE)
+                Picasso.with(videoViewHolder.coverImage.getContext())
+                        .load(item.image)
+                        .fit()
+                        .placeholder(videoViewHolder.getCoverImage().getDrawable())
                         .into(videoViewHolder.coverImage);
             }
         }
@@ -188,6 +189,48 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void onItemClick(View v, Media item, int position);
     }
 
+    static class OverviewItem {
+        Media media;
+        boolean isLoadingItem = false;
+
+        OverviewItem(Media media) {
+            this.media = media;
+        }
+
+        OverviewItem(boolean loading) {
+            this.isLoadingItem = loading;
+        }
+    }
+
+    private static class DrawGradient implements Transformation {
+        static Transformation INSTANCE = new DrawGradient();
+
+        @Override
+        public Bitmap transform(Bitmap src) {
+            // Code borrowed from https://stackoverflow.com/questions/23657811/how-to-mask-bitmap-with-lineargradient-shader-properly
+            int w = src.getWidth();
+            int h = src.getHeight();
+            Bitmap overlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(overlay);
+
+            canvas.drawBitmap(src, 0, 0, null);
+            src.recycle();
+
+            Paint paint = new Paint();
+            float gradientHeight = h / 2f;
+            LinearGradient shader = new LinearGradient(0, h - gradientHeight, 0, h, 0xFFFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP);
+            paint.setShader(shader);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+            canvas.drawRect(0, h - gradientHeight, w, h, paint);
+            return overlay;
+        }
+
+        @Override
+        public String key() {
+            return "gradient()";
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         View itemView;
@@ -242,47 +285,5 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             itemView.setMinimumHeight(mItemHeight);
         }
 
-    }
-
-    static class OverviewItem {
-        Media media;
-        boolean isLoadingItem = false;
-
-        OverviewItem(Media media) {
-            this.media = media;
-        }
-
-        OverviewItem(boolean loading) {
-            this.isLoadingItem = loading;
-        }
-    }
-
-    private static class DrawGradient implements Transformation {
-        static Transformation INSTANCE = new DrawGradient();
-
-        @Override
-        public Bitmap transform(Bitmap src) {
-            // Code borrowed from https://stackoverflow.com/questions/23657811/how-to-mask-bitmap-with-lineargradient-shader-properly
-            int w = src.getWidth();
-            int h = src.getHeight();
-            Bitmap overlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(overlay);
-
-            canvas.drawBitmap(src, 0, 0, null);
-            src.recycle();
-
-            Paint paint = new Paint();
-            float gradientHeight = h / 2f;
-            LinearGradient shader = new LinearGradient(0, h - gradientHeight, 0, h, 0xFFFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP);
-            paint.setShader(shader);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-            canvas.drawRect(0, h - gradientHeight, w, h, paint);
-            return overlay;
-        }
-
-        @Override
-        public String key() {
-            return "gradient()";
-        }
     }
 }
