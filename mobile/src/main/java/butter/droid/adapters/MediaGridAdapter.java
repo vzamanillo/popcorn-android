@@ -115,7 +115,6 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .memoryPolicy(MemoryPolicy.NO_CACHE)
                         .fit()
                         .centerCrop()
-                        .placeholder(videoViewHolder.getCoverImage().getDrawable())
                         .into(videoViewHolder.coverImage);
             }
         }
