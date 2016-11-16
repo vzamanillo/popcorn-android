@@ -107,6 +107,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             videoViewHolder.year.setText(item.year);
 
             if (item.image != null && !item.image.equals("")) {
+                Picasso.with(videoViewHolder.coverImage.getContext()).cancelRequest(videoViewHolder.coverImage);
                 Picasso.with(videoViewHolder.coverImage.getContext())
                         .load(item.image)
                         .fit()
