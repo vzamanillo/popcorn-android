@@ -22,6 +22,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.multidex.MultiDex;
@@ -52,6 +53,7 @@ public class ButterApplication extends Application implements ButterUpdater.List
     private static OkHttpClient sHttpClient;
     private static String sDefSystemLanguage;
     private static Application sThis;
+    private static boolean debugable;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -63,6 +65,8 @@ public class ButterApplication extends Application implements ButterUpdater.List
     public void onCreate() {
         super.onCreate();
         sThis = this;
+
+        debugable = ( 0 != ( getAppContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
 
         sDefSystemLanguage = LocaleUtils.getCurrentAsString();
 
@@ -102,6 +106,8 @@ public class ButterApplication extends Application implements ButterUpdater.List
         OkHttpDownloader downloader = new OkHttpDownloader(getHttpClient());
         builder.downloader(downloader);
         Picasso.setSingletonInstance(builder.build());
+        Picasso.with(getAppContext()).setIndicatorsEnabled(ButterApplication.isDebugable());
+        Picasso.with(getAppContext()).setLoggingEnabled(ButterApplication.isDebugable());
     }
 
     @Override
@@ -173,5 +179,9 @@ public class ButterApplication extends Application implements ButterUpdater.List
 
     public static Context getAppContext() {
         return sThis;
+    }
+
+    public static boolean isDebugable() {
+        return debugable;
     }
 }
