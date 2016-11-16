@@ -77,7 +77,7 @@ public class ButterApplication extends Application implements ButterUpdater.List
         Foreground.init(this);
 
         //initialise logging
-        if (BuildConfig.DEBUG) {
+        if (debugable || BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
 
@@ -103,8 +103,8 @@ public class ButterApplication extends Application implements ButterUpdater.List
         Timber.i("Chosen cache location: " + directory);
 
         Picasso.setSingletonInstance(new Picasso.Builder(getAppContext()).downloader(new OkHttpDownloader(getHttpClient())).build());
-        Picasso.with(getAppContext()).setIndicatorsEnabled(ButterApplication.isDebugable());
-        Picasso.with(getAppContext()).setLoggingEnabled(ButterApplication.isDebugable());
+        Picasso.with(getAppContext()).setIndicatorsEnabled(debugable || BuildConfig.DEBUG);
+        Picasso.with(getAppContext()).setLoggingEnabled(debugable || BuildConfig.DEBUG);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class ButterApplication extends Application implements ButterUpdater.List
             sHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
             sHttpClient.setRetryOnConnectionFailure(true);
 
-            int cacheSize = 10 * 1024 * 1024;
+            long cacheSize = 20 * 1024 * 1024;
             File cacheLocation = new File(PrefUtils.get(ButterApplication.getAppContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(ButterApplication.getAppContext()).toString()));
             if (!cacheLocation.mkdirs()){
                 Timber.w("Could not create directory: " + cacheLocation.getAbsolutePath());
