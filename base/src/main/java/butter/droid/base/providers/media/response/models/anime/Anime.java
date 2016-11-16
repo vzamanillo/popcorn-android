@@ -25,14 +25,15 @@ public class Anime extends ResponseItem {
     private String slug;
     @JsonProperty("type")
     private String type;
+    @JsonProperty("num_seasons")
+    private int numSeasons;
     @JsonProperty("genres")
     private List<String> genres = new ArrayList<>();
     @JsonProperty("images")
     private Images images;
     @JsonProperty("rating")
     private Rating rating;
-    @JsonProperty("num_seasons")
-    private int numSeasons;
+
 
     /**
      * @return The id
@@ -131,6 +132,22 @@ public class Anime extends ResponseItem {
     }
 
     /**
+     * @return The numSeasons
+     */
+    @JsonProperty("num_seasons")
+    public int getNumSeasons() {
+        return numSeasons;
+    }
+
+    /**
+     * @param numSeasons The num_seasons
+     */
+    @JsonProperty("num_seasons")
+    public void setNumSeasons(int numSeasons) {
+        this.numSeasons = numSeasons;
+    }
+
+    /**
      * @return The genres
      */
     @JsonProperty("genres")
@@ -177,21 +194,4 @@ public class Anime extends ResponseItem {
     public void setRating(Rating rating) {
         this.rating = rating;
     }
-
-    /**
-     * @return The numSeasons
-     */
-    @JsonProperty("num_seasons")
-    public int getNumSeasons() {
-        return numSeasons;
-    }
-
-    /**
-     * @param numSeasons The num_seasons
-     */
-    @JsonProperty("num_seasons")
-    public void setNumSeasons(int numSeasons) {
-        this.numSeasons = numSeasons;
-    }
-
 }
