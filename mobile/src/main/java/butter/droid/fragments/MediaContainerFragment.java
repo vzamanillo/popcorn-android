@@ -22,8 +22,6 @@ public class MediaContainerFragment extends Fragment {
 
     public static final String EXTRA_PROVIDER = "provider";
 
-    private MediaPagerAdapter mAdapter;
-    private MediaProvider mProvider;
     private Integer mSelection = 0;
 
     @BindView(R.id.pager)
@@ -47,8 +45,8 @@ public class MediaContainerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        mProvider = getArguments().getParcelable(EXTRA_PROVIDER);
-        mAdapter = new MediaPagerAdapter(mProvider, getChildFragmentManager(), mProvider.getNavigation());
+        MediaProvider mProvider = getArguments().getParcelable(EXTRA_PROVIDER);
+        MediaPagerAdapter mAdapter = new MediaPagerAdapter(mProvider, getChildFragmentManager(), mProvider.getNavigation());
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -64,7 +62,7 @@ public class MediaContainerFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        mSelection = MediaProvider.DEFAULT_NAVIGATION_INDEX;
+        mSelection = mProvider.getDefaultNavigationIndex();
     }
 
     @Override
