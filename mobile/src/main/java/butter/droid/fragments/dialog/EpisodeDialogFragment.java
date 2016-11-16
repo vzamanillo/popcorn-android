@@ -383,9 +383,9 @@ public class EpisodeDialogFragment extends DialogFragment {
         if (mOpenMagnet == null) return;
 
         if (mMagnet == null) {
-            mMagnet = new Magnet(mActivity, mEpisode.torrents.get(mSelectedQuality).url);
+            mMagnet = new Magnet(mActivity, mEpisode.torrents.get(mSelectedQuality).getUrl());
         }
-        mMagnet.setUrl(mEpisode.torrents.get(mSelectedQuality).url);
+        mMagnet.setUrl(mEpisode.torrents.get(mSelectedQuality).getUrl());
 
         if (!mMagnet.canOpen()) {
             mOpenMagnet.setVisibility(View.GONE);
@@ -409,7 +409,7 @@ public class EpisodeDialogFragment extends DialogFragment {
     public void playClick() {
         smoothDismiss();
         Media.Torrent torrent = mEpisode.torrents.get(mSelectedQuality);
-        StreamInfo streamInfo = new StreamInfo(mEpisode, mShow, torrent.url, mSelectedSubtitleLanguage, mSelectedQuality);
+        StreamInfo streamInfo = new StreamInfo(mEpisode, mShow, torrent.getUrl(), mSelectedSubtitleLanguage, mSelectedQuality);
         ((MediaDetailActivity) getActivity()).playStream(streamInfo);
     }
 

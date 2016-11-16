@@ -179,6 +179,38 @@ public class Media implements Parcelable {
             hash = in.readString();
         }
 
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Integer getSeeds() {
+            return seeds;
+        }
+
+        public void setSeeds(Integer seeds) {
+            this.seeds = seeds;
+        }
+
+        public Integer getPeers() {
+            return peers;
+        }
+
+        public void setPeers(Integer peers) {
+            this.peers = peers;
+        }
+
+        public String getHash() {
+            return hash;
+        }
+
+        public void setHash(String hash) {
+            this.hash = hash;
+        }
+
         @Override
         public int describeContents() {
             return 0;
