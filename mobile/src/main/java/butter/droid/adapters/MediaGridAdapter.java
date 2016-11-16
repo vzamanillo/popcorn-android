@@ -33,6 +33,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -110,7 +112,9 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 Picasso.with(videoViewHolder.coverImage.getContext()).cancelRequest(videoViewHolder.coverImage);
                 Picasso.with(videoViewHolder.coverImage.getContext())
                         .load(item.image)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE)
                         .fit()
+                        .centerCrop()
                         .placeholder(videoViewHolder.getCoverImage().getDrawable())
                         .into(videoViewHolder.coverImage);
             }
