@@ -55,11 +55,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
             try {
                 Class<?> clazz = Class.forName(className);
                 provider = (MediaProvider) clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return provider;
