@@ -35,7 +35,7 @@ public class AnimeResponse extends Response<Anime> {
                 show.seasons = item.getNumSeasons();
                 // media.tvdbId = (String) item.get("tvdb_id");
                 show.year = item.getYear();
-                if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+                if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
                     show.image = item.getImages().getPoster().replace("/original/", "/medium/");
                     show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
                 }

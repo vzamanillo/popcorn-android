@@ -50,7 +50,7 @@ public class MovieResponse extends Response<Movie> {
             movie.synopsis = item.getSynopsis();
             movie.certification = item.getCertification();
 
-            if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+            if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
                 movie.image = item.getImages().getPoster().replace("/original/", "/medium/");
                 movie.fullImage = item.getImages().getPoster();
                 movie.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");

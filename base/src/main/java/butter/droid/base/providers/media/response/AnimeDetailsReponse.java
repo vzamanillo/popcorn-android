@@ -90,7 +90,7 @@ public class AnimeDetailsReponse extends DetailsResponse<AnimeDetails> {
             media.videoId = item.getId();
             media.imdbId = "mal-" + media.videoId;
             media.year = item.getYear();
-            if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+            if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
                 media.image = item.getImages().getPoster().replace("/original/", "/medium/");
                 media.fullImage = item.getImages().getPoster();
                 media.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");

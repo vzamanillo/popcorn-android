@@ -30,7 +30,7 @@ public class TVDetailsReponse extends DetailsResponse<ShowDetails> {
             show.seasons = item.getNumSeasons();
             show.year = item.getYear();
 
-            if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+            if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
                 show.image = item.getImages().getPoster().replace("/original/", "/medium/");
                 show.fullImage = item.getImages().getPoster();
                 show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");

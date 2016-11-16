@@ -24,7 +24,7 @@ public class TVResponse extends Response<Show> {
             show.seasons = item.getNumSeasons();
             show.tvdbId = item.getTvdbId();
             show.year = item.getYear();
-            if (!item.getImages().getPoster().contains("images/posterholder.png")) {
+            if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
                 show.image = item.getImages().getPoster().replace("/original/", "/medium/");
                 show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
             }
