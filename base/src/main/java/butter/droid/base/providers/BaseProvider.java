@@ -49,16 +49,6 @@ public abstract class BaseProvider {
     }
 
     /**
-     * Enqueue request without callback
-     *
-     * @param request Request
-     * @return Call
-     */
-    protected Call enqueue(Request request) {
-        return enqueue(request, null);
-    }
-
-    /**
      * Enqueue request with callback
      *
      * @param request         Request
