@@ -45,7 +45,7 @@ import timber.log.Timber;
 public abstract class MediaProvider extends BaseProvider implements Parcelable {
 
     public static final String MEDIA_CALL = "media_http_call";
-    public static final int DEFAULT_NAVIGATION_INDEX = 1;
+    private static final int DEFAULT_NAVIGATION_INDEX = 1;
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<MediaProvider> CREATOR = new Parcelable.Creator<MediaProvider>() {
         @Override
@@ -280,7 +280,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
     }
 
     public int getDefaultNavigationIndex() {
-        return 1;
+        return DEFAULT_NAVIGATION_INDEX;
     }
 
     public List<Genre> getGenres() {
