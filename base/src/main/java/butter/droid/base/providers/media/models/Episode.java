@@ -55,7 +55,7 @@ public class Episode extends Media implements Parcelable {
         mMetaProvider = metaProvider;
     }
 
-    Episode(Parcel in) {
+    private Episode(Parcel in) {
         super(in);
         aired = in.readInt();
         episode = in.readInt();
@@ -71,11 +71,7 @@ public class Episode extends Media implements Parcelable {
         try {
             Class<?> clazz = Class.forName(className);
             mMetaProvider = (MetaProvider) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

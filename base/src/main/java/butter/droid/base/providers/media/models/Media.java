@@ -78,11 +78,7 @@ public class Media implements Parcelable {
         try {
             Class<?> clazz = Class.forName(className);
             mSubsProvider = (SubsProvider) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         className = in.readString();
@@ -90,11 +86,7 @@ public class Media implements Parcelable {
         try {
             Class<?> clazz = Class.forName(className);
             mMediaProvider = (MediaProvider) clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -157,13 +149,12 @@ public class Media implements Parcelable {
                 return new Torrent[size];
             }
         };
-        public String url;
-        public Integer seeds;
-        public Integer peers;
-        public String hash;
+        private String url;
+        private Integer seeds;
+        private Integer peers;
+        private String hash;
 
         public Torrent() {
-
         }
 
         public Torrent(String url, Integer seeds, Integer peers, String hash) {
