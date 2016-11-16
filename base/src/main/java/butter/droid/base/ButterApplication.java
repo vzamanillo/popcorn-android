@@ -102,10 +102,7 @@ public class ButterApplication extends Application implements ButterUpdater.List
         Timber.d("StorageLocations: " + StorageUtils.getAllStorageLocations());
         Timber.i("Chosen cache location: " + directory);
 
-        Picasso.Builder builder = new Picasso.Builder(getAppContext());
-        OkHttpDownloader downloader = new OkHttpDownloader(getHttpClient());
-        builder.downloader(downloader);
-        Picasso.setSingletonInstance(builder.build());
+        Picasso.setSingletonInstance(new Picasso.Builder(getAppContext()).downloader(new OkHttpDownloader(getHttpClient())).build());
         Picasso.with(getAppContext()).setIndicatorsEnabled(ButterApplication.isDebugable());
         Picasso.with(getAppContext()).setLoggingEnabled(ButterApplication.isDebugable());
     }
