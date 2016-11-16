@@ -5,10 +5,6 @@ import android.os.Build;
 
 import java.util.Locale;
 
-/**
- * Created by vzamanillo on 04/11/2016.
- */
-
 public class SupportedArchitectures extends Compatibility {
 
     /**
