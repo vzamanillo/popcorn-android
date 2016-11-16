@@ -74,10 +74,7 @@ public class TVDetailsReponse extends DetailsResponse<ShowDetails> {
                     if (episode.getTorrents() != null) {
                         for (Map.Entry<String, Quality> entry : episode.getTorrents().getQualities().entrySet()) {
                             if (!entry.getKey().equals("0")) {
-                                Media.Torrent torrent = new Media.Torrent();
-                                torrent.url = entry.getValue().getUrl();
-                                torrent.seeds = entry.getValue().getSeeds();
-                                torrent.peers = entry.getValue().getPeers();
+                                Media.Torrent torrent = new Media.Torrent(entry.getValue().getUrl(), entry.getValue().getSeeds(), entry.getValue().getPeers());
                                 episodeObject.torrents.put(entry.getKey(), torrent);
                             }
                         }
