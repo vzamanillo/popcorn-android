@@ -88,6 +88,11 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         return getList(null, filters, callback);
     }
 
+    @Override
+    public void cancel() {
+        super.cancel(getMediaCallTag());
+    }
+
     /**
      * Get a list of Media items from the provider
      *

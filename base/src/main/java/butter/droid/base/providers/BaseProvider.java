@@ -61,13 +61,13 @@ public abstract class BaseProvider {
         return mCurrentCall;
     }
 
-    public void cancel() {
+    public void cancel(final String tag) {
         // Cancel in asynctask to prevent networkOnMainThreadException but make it blocking to prevent network calls to be made and then immediately cancelled.
         try {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    getClient().cancel(MediaProvider.MEDIA_CALL_TAG);
+                    getClient().cancel(tag);
                     getClient().cancel(MetaProvider.META_CALL);
                     getClient().cancel(SubsProvider.SUBS_CALL);
                     return null;
@@ -76,6 +76,10 @@ public abstract class BaseProvider {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    public void cancel() {
+        cancel(MediaProvider.MEDIA_CALL_TAG);
     }
 
     /**
