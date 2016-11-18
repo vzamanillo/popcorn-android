@@ -44,8 +44,7 @@ import timber.log.Timber;
  */
 public abstract class MediaProvider extends BaseProvider implements Parcelable {
 
-    public static final String MEDIA_CALL = "media_http_call";
-    private static final int DEFAULT_NAVIGATION_INDEX = 1;
+    public static final String MEDIA_CALL_TAG = "media_http_call";
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<MediaProvider> CREATOR = new Parcelable.Creator<MediaProvider>() {
         @Override
@@ -66,6 +65,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
             return null;
         }
     };
+    private static final int DEFAULT_NAVIGATION_INDEX = 1;
     private String[] apiUrls = new String[0];
     private String itemsPath = "";
     private String itemDetailsPath = "";
@@ -165,7 +165,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         String query = buildQuery(params);
         url = url + "?" + query;
         requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
+        requestBuilder.tag(getMediaCallTag());
 
         Timber.d(this.getClass().getSimpleName(), "Making request to: " + url);
 
@@ -226,7 +226,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         Request.Builder requestBuilder = new Request.Builder();
         String url = apiUrls[currentApi] + itemDetailsPath + currentList.get(index).videoId;
         requestBuilder.url(url);
-        requestBuilder.tag(MEDIA_CALL);
+        requestBuilder.tag(getMediaCallTag());
 
         Timber.d(this.getClass().getSimpleName(), "Making request to: " + url);
 
@@ -285,6 +285,10 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
 
     public List<Genre> getGenres() {
         return new ArrayList<>();
+    }
+
+    public String getMediaCallTag() {
+        return MEDIA_CALL_TAG;
     }
 
     @Override

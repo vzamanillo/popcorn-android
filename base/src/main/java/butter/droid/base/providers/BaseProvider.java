@@ -67,7 +67,7 @@ public abstract class BaseProvider {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    getClient().cancel(MediaProvider.MEDIA_CALL);
+                    getClient().cancel(MediaProvider.MEDIA_CALL_TAG);
                     getClient().cancel(MetaProvider.META_CALL);
                     getClient().cancel(SubsProvider.SUBS_CALL);
                     return null;
