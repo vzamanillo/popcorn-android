@@ -292,9 +292,8 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         return new ArrayList<>();
     }
 
-    public String getMediaCallTag() {
-        return MEDIA_CALL_TAG;
-    }
+    public abstract String getMediaCallTag();
+
 
     @Override
     public int describeContents() {
