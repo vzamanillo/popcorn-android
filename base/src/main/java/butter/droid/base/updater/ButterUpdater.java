@@ -32,7 +32,6 @@ import android.os.Handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -83,7 +82,6 @@ public class ButterUpdater extends Observable {
     private static final String SHA1_KEY = "sha1_update";
 
     private final OkHttpClient mHttpClient = ButterApplication.getHttpClient();
-    private final Gson mGson = new Gson();
     private final Handler mUpdateHandler = new Handler();
 
     private Context mContext = null;
