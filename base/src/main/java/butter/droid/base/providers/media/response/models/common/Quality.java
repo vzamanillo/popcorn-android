@@ -19,7 +19,6 @@ public class Quality {
     /**
      * @return The provider
      */
-    @JsonProperty("provider")
     public String getProvider() {
         return provider;
     }
@@ -27,7 +26,6 @@ public class Quality {
     /**
      * @param provider The provider
      */
-    @JsonProperty("provider")
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -35,7 +33,6 @@ public class Quality {
     /**
      * @return The peers
      */
-    @JsonProperty("peers")
     public int getPeers() {
         return peers;
     }
@@ -43,7 +40,6 @@ public class Quality {
     /**
      * @param peers The peers
      */
-    @JsonProperty("peers")
     public void setPeers(int peers) {
         this.peers = peers;
     }
@@ -51,7 +47,6 @@ public class Quality {
     /**
      * @return The seeds
      */
-    @JsonProperty("seeds")
     public int getSeeds() {
         return seeds;
     }
@@ -59,7 +54,6 @@ public class Quality {
     /**
      * @param seeds The seeds
      */
-    @JsonProperty("seeds")
     public void setSeeds(int seeds) {
         this.seeds = seeds;
     }
@@ -67,7 +61,6 @@ public class Quality {
     /**
      * @return The url
      */
-    @JsonProperty("url")
     public String getUrl() {
         return url;
     }
@@ -75,7 +68,6 @@ public class Quality {
     /**
      * @param url The url
      */
-    @JsonProperty("url")
     public void setUrl(String url) {
         this.url = url;
     }
