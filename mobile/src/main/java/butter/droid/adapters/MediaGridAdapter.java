@@ -50,7 +50,7 @@ import hugo.weaving.DebugLog;
 
 public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    final int NORMAL = 0, LOADING = 1;
+    private final int NORMAL = 0, LOADING = 1;
     private int mItemWidth, mItemHeight, mMargin, mColumns;
     private ArrayList<OverviewItem> mItems = new ArrayList<>();
     //	private ArrayList<Media> mData = new ArrayList<>();
@@ -166,8 +166,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @DebugLog
     public boolean isLoading() {
-        if (getItemCount() <= 0) return false;
-        return getItemViewType(getItemCount() - 1) == LOADING;
+        return getItemCount() > 0 && getItemViewType(getItemCount() - 1) == LOADING;
     }
 
     @DebugLog
@@ -192,7 +191,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void onItemClick(View v, Media item, int position);
     }
 
-    static class OverviewItem {
+    private static class OverviewItem {
         Media media;
         boolean isLoadingItem = false;
 
@@ -270,7 +269,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Override
         public void onClick(View view) {
             if (mItemClickListener != null) {
-                int position = getPosition();
+                int position = getLayoutPosition();
                 Media item = getItem(position).media;
                 mItemClickListener.onItemClick(view, item, position);
             }
@@ -278,11 +277,11 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    class LoadingHolder extends RecyclerView.ViewHolder {
+    private class LoadingHolder extends RecyclerView.ViewHolder {
 
         View itemView;
 
-        public LoadingHolder(View itemView) {
+        LoadingHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             itemView.setMinimumHeight(mItemHeight);
