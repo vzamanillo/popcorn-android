@@ -2,6 +2,7 @@ package butter.droid.fragments;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -271,11 +272,11 @@ public class MovieDetailFragment extends BaseDetailFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         mAttached = true;
-        if (activity instanceof FragmentListener)
-            mCallback = (FragmentListener) activity;
+        if (context instanceof FragmentListener)
+            mCallback = (FragmentListener) context;
     }
 
     @Override
