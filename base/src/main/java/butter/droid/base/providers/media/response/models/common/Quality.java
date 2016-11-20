@@ -9,7 +9,9 @@ public class Quality {
 
     @JsonProperty("provider")
     private String provider;
+    @JsonProperty("peers")
     private int peers;
+    @JsonProperty("seeds")
     private int seeds;
     @JsonProperty("url")
     private String url;
