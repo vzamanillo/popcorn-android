@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butter.droid.MobileButterApplication;
@@ -50,8 +53,12 @@ public class MediaContainerFragment extends Fragment {
                 .getComponent()
                 .inject(this);
 
-        MediaProvider mProvider = providerManager.getCurrentMediaProvider();
-        MediaPagerAdapter mAdapter = new MediaPagerAdapter(mProvider, getChildFragmentManager(), mProvider.getNavigation());
+        List<MediaListFragment> fragments = new ArrayList<>();
+        for (MediaProvider mediaProvider : providerManager.getProviders()) {
+            fragments.add(MediaListFragment.newInstance(mediaProvider, MediaListFragment.Mode.NORMAL));
+        }
+
+        MediaPagerAdapter mAdapter = new MediaPagerAdapter(getChildFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -67,7 +74,7 @@ public class MediaContainerFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        mSelection = mProvider.getDefaultNavigationIndex();
+        //mSelection = mProvider.getDefaultNavigationIndex();
     }
 
     @Override

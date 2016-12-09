@@ -17,7 +17,7 @@
 
 package butter.droid.fragments.dialog;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -33,7 +33,8 @@ import javax.inject.Inject;
 import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.base.manager.provider.ProviderManager;
-import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.providers.media.callback.MediaProviderCallback;
+import butter.droid.base.providers.media.filters.Filters;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.utils.ThreadUtils;
 
@@ -82,7 +83,7 @@ public class LoadingDetailDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if (null == getTargetFragment())
             throw new IllegalArgumentException("target fragment must be set");
@@ -97,9 +98,9 @@ public class LoadingDetailDialogFragment extends DialogFragment {
         ArrayList<Media> currentList = mCallback.getCurrentList();
         int position = getArguments().getInt(EXTRA_MEDIA);
         final Media media = currentList.get(position);
-        providerManager.getCurrentMediaProvider().getDetail(currentList, position, new MediaProvider.Callback() {
+        providerManager.getCurrentMediaProvider().getDetail(currentList, position, new MediaProviderCallback() {
                     @Override
-                    public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
+                    public void onSuccess(Filters filters, ArrayList<Media> items, boolean changed) {
                         if (!isAdded()) return;
                         if (items.size() <= 0) return;
 

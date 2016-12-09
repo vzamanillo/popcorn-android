@@ -122,7 +122,7 @@ public class RecommendationService extends IntentService {
 
         Timber.d("Fetching shows");
         //fetch shows
-        mShowProvider.getList(showsFilter, new MediaProvider.Callback() {
+        mShowProvider.getList(showsFilter, new MediaProvider.MediaProviderCallback() {
             @Override
             public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
                 Timber.d(String.format("loaded %s shows", items.size()));

@@ -33,9 +33,10 @@ public class ManagerModule {
     @Singleton
     public ProviderManager provideProviderManager(MoviesProvider moviesProvider,
                                                   TVProvider tvProvider, AnimeProvider animeProvider) {
-        return new ProviderManager(moviesProvider, tvProvider, animeProvider);
+        ProviderManager providerManager = new ProviderManager();
+        providerManager.getProviders().add(moviesProvider);
+        providerManager.getProviders().add(tvProvider);
+        providerManager.getProviders().add(animeProvider);
+        return providerManager;
     }
-
-
-
 }

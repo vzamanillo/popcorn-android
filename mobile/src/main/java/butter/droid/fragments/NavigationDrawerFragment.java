@@ -51,9 +51,7 @@ import butter.droid.adapters.NavigationAdapter;
 import butter.droid.adapters.decorators.OneShotDividerDecorator;
 import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.manager.provider.ProviderManager;
-import butter.droid.base.manager.updater.ButterUpdateManager;
 import butter.droid.base.utils.PrefUtils;
-import butter.droid.base.utils.ProviderUtils;
 import butter.droid.base.vpn.VPNHTChecker;
 import butter.droid.base.vpn.VPNManager;
 import butter.droid.fragments.dialog.VPNInfoDialogFragment;
@@ -140,15 +138,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
 
         List<AbsNavDrawerItem> navItems = new ArrayList<>();
         navItems.add(new AbsNavDrawerItem.HeaderNavDrawerItem());
-        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_MOVIE),
-                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_MOVIE),
-                ProviderManager.PROVIDER_TYPE_MOVIE));
-        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_SHOW),
-                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_SHOW),
-                ProviderManager.PROVIDER_TYPE_SHOW));
-        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_ANIME),
-                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_ANIME),
-                ProviderManager.PROVIDER_TYPE_ANIME));
+
         navItems.add(new AbsNavDrawerItem.ScreenNavDrawerItem(R.string.preferences, R.drawable.ic_nav_settings,
                 PreferencesActivity.getIntent(getContext())));
         if (PrefUtils.get(getActivity(), Prefs.SHOW_VPN, true) && vpnhtChecker.isDownloadAvailable()) {
@@ -265,7 +255,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
     public boolean onOptionsItemSelected(MenuItem item) {
         //consume the home button press
         return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-
     }
 
     @Override
@@ -273,10 +262,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         switch (item.getType()) {
             case AbsNavDrawerItem.TYPE_HEADER:
                 throw new IllegalStateException("Header item can not be clickable.");
-            case AbsNavDrawerItem.TYPE_PROVIDER:
-                providerManager.setCurrentProviderType(((AbsNavDrawerItem.ProviderNavDrawerItem) item).getProviderType());
-                selectItem(mAdapter.getCorrectPosition(position));
-                break;
             case AbsNavDrawerItem.TYPE_SCREEN:
                 getActivity().startActivity(((AbsNavDrawerItem.ScreenNavDrawerItem) item).getIntent());
                 mDrawerLayout.closeDrawer(mNavigationDrawerContainer);
@@ -321,9 +306,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
 
 
         public static final int TYPE_HEADER = 0;
-        static final int TYPE_PROVIDER = 1;
-        static final int TYPE_SCREEN = 2;
-        static final int TYPE_VPN = 3;
+        static final int TYPE_SCREEN = 1;
+        static final int TYPE_VPN = 2;
         @StringRes
         private final int title;
         @DrawableRes
@@ -345,7 +329,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         @NavType
         public abstract int getType();
 
-        @IntDef({TYPE_HEADER, TYPE_PROVIDER, TYPE_SCREEN, TYPE_VPN})
+        @IntDef({TYPE_HEADER, TYPE_SCREEN, TYPE_VPN})
         @Retention(RetentionPolicy.SOURCE)
         @interface NavType {
         }
@@ -430,29 +414,5 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
                 return TYPE_HEADER;
             }
         }
-
-        public static class ProviderNavDrawerItem extends AbsNavDrawerItem {
-
-            @ProviderManager.ProviderType
-            private final int providerType;
-
-            public ProviderNavDrawerItem(@StringRes int title, @DrawableRes int icon, @ProviderManager.ProviderType int providerType) {
-                super(title, icon);
-                this.providerType = providerType;
-            }
-
-            @ProviderManager.ProviderType
-            public int getProviderType() {
-                return providerType;
-            }
-
-            @Override
-            public int getType() {
-                return TYPE_PROVIDER;
-            }
-
-        }
-
     }
-
 }

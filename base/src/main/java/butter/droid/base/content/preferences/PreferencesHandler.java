@@ -22,8 +22,8 @@ import butter.droid.base.Constants;
 import butter.droid.base.R;
 import butter.droid.base.compat.SupportedArchitectures;
 import butter.droid.base.fragments.dialog.ChangeLogDialogFragment;
-import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.manager.updater.ButterUpdateManager;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.utils.LocaleUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.StorageUtils;
@@ -65,77 +65,79 @@ public interface PreferencesHandler {
             final String[] qualities = context.getResources().getStringArray(R.array.video_qualities);
             final String[] pixelFormats = { context.getString(R.string.rgb16), context.getString(R.string.rgb32), context.getString(R.string.yuv) };
 
-            if(!isTV)
-            prefItems.add(PrefItem.newBuilder(context)
-                    .setIconResource(R.drawable.ic_prefs_default_view)
-                    .setTitleResource(R.string.default_view)
-                    .setPreferenceKey(Prefs.DEFAULT_PROVIDER)
-                    .setDefaultValue(ProviderManager.PROVIDER_TYPE_MOVIE)
-                    .setOnClickListener(new PrefItem.OnClickListener() {
-                        @Override
-                        public void onClick(final PrefItem item) {
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.SIMPLE_CHOICE, item.getValue(), 0, 0, new OnSelectionListener() {
-                                @Override
-                                public void onSelection(int position, Object value) {
-                                    item.saveValue(position);
-                                }
-                            });
-                        }
-                    })
-                    .setSubtitleGenerator(new PrefItem.SubtitleGenerator() {
-                        @Override
-                        public String get(PrefItem item) {
-                            return items[(Integer) item.getValue()];
-                        }
-                    })
-                    .build());
-
-            if(!isTV)
-            prefItems.add(PrefItem.newBuilder(context)
-                    .setIconResource(R.drawable.ic_prefs_default_player)
-                    .setTitleResource(R.string.default_player)
-                    .setPreferenceKey(Prefs.DEFAULT_PLAYER)
-                    .setDefaultValue("")
-                    .setOnClickListener(new PrefItem.OnClickListener() {
-                        @Override
-                        public void onClick(final PrefItem item) {
-                            int currentPosition = 0;
-                            String currentValue = item.getValue().toString();
-
-                            final Map<String, String> players = DefaultPlayer.getVideoPlayerApps();
-                            final String[] playerDatas = players.keySet().toArray(new String[players.size()]);
-                            String[] items = new String[players.size() + 1];
-                            items[0] = context.getString(R.string.internal_player);
-                            for (int i = 0; i < playerDatas.length; i++) {
-                                String playerData = playerDatas[i];
-                                String playerName = players.get(playerData);
-
-                                items[i + 1] = playerName;
-                                if (playerData.equals(currentValue)) {
-                                    currentPosition = i + 1;
-                                }
+            if (!isTV) {
+                prefItems.add(PrefItem.newBuilder(context)
+                        .setIconResource(R.drawable.ic_prefs_default_view)
+                        .setTitleResource(R.string.default_view)
+                        .setPreferenceKey(Prefs.DEFAULT_PROVIDER)
+                        .setDefaultValue(MediaProviderType.MOVIE.getTitle())
+                        .setOnClickListener(new PrefItem.OnClickListener() {
+                            @Override
+                            public void onClick(final PrefItem item) {
+                                handler.openListSelection(item.getTitle(), items, SelectionMode.SIMPLE_CHOICE, item.getValue(), 0, 0, new OnSelectionListener() {
+                                    @Override
+                                    public void onSelection(int position, Object value) {
+                                        item.saveValue(position);
+                                    }
+                                });
                             }
+                        })
+                        .setSubtitleGenerator(new PrefItem.SubtitleGenerator() {
+                            @Override
+                            public String get(PrefItem item) {
+                                return items[(Integer) item.getValue()];
+                            }
+                        })
+                        .build());
+            }
 
-                            handler.openListSelection(item.getTitle(), items, SelectionMode.ADVANCED_CHOICE, currentPosition, 0, 0, new OnSelectionListener() {
-                                @Override
-                                public void onSelection(int position, Object value) {
-                                    if (position == 0) {
-                                        DefaultPlayer.set("", "");
-                                    } else {
-                                        String playerData = playerDatas[position - 1];
-                                        DefaultPlayer.set(players.get(playerData), playerData);
+            if (!isTV) {
+                prefItems.add(PrefItem.newBuilder(context)
+                        .setIconResource(R.drawable.ic_prefs_default_player)
+                        .setTitleResource(R.string.default_player)
+                        .setPreferenceKey(Prefs.DEFAULT_PLAYER)
+                        .setDefaultValue("")
+                        .setOnClickListener(new PrefItem.OnClickListener() {
+                            @Override
+                            public void onClick(final PrefItem item) {
+                                int currentPosition = 0;
+                                String currentValue = item.getValue().toString();
+
+                                final Map<String, String> players = DefaultPlayer.getVideoPlayerApps();
+                                final String[] playerDatas = players.keySet().toArray(new String[players.size()]);
+                                String[] items = new String[players.size() + 1];
+                                items[0] = context.getString(R.string.internal_player);
+                                for (int i = 0; i < playerDatas.length; i++) {
+                                    String playerData = playerDatas[i];
+                                    String playerName = players.get(playerData);
+
+                                    items[i + 1] = playerName;
+                                    if (playerData.equals(currentValue)) {
+                                        currentPosition = i + 1;
                                     }
                                 }
-                            });
-                        }
-                    })
-                    .setSubtitleGenerator(new PrefItem.SubtitleGenerator() {
-                        @Override
-                        public String get(PrefItem item) {
-                            return PrefUtils.get(context, Prefs.DEFAULT_PLAYER_NAME, context.getString(R.string.internal_player));
-                        }
-                    })
-                    .build());
+
+                                handler.openListSelection(item.getTitle(), items, SelectionMode.ADVANCED_CHOICE, currentPosition, 0, 0, new OnSelectionListener() {
+                                    @Override
+                                    public void onSelection(int position, Object value) {
+                                        if (position == 0) {
+                                            DefaultPlayer.set("", "");
+                                        } else {
+                                            String playerData = playerDatas[position - 1];
+                                            DefaultPlayer.set(players.get(playerData), playerData);
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .setSubtitleGenerator(new PrefItem.SubtitleGenerator() {
+                            @Override
+                            public String get(PrefItem item) {
+                                return PrefUtils.get(context, Prefs.DEFAULT_PLAYER_NAME, context.getString(R.string.internal_player));
+                            }
+                        })
+                        .build());
+            }
 
             prefItems.add(PrefItem.newBuilder(context)
                     .setIconResource(R.drawable.ic_action_quality)

@@ -18,7 +18,6 @@
 package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +29,13 @@ import java.util.List;
 
 import butter.droid.base.R;
 import butter.droid.base.providers.BaseProvider;
+import butter.droid.base.providers.media.callback.MediaProviderCallback;
+import butter.droid.base.providers.media.filters.Filters;
+import butter.droid.base.providers.media.filters.Order;
+import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.subs.SubsProvider;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -49,7 +53,6 @@ public abstract class MediaProvider extends BaseProvider {
     @Nullable
     private final SubsProvider subsProvider;
 
-    private static final int DEFAULT_NAVIGATION_INDEX = 1;
     private String[] apiUrls = new String[0];
     private String itemsPath = "";
     private String itemDetailsPath = "";
@@ -70,7 +73,7 @@ public abstract class MediaProvider extends BaseProvider {
      * @param filters  Filters the provider can use to sort or search
      * @param callback MediaProvider callback
      */
-    public Call getList(Filters filters, Callback callback) {
+    public Call getList(Filters filters, MediaProviderCallback callback) {
         return getList(null, filters, callback);
     }
 
@@ -82,7 +85,7 @@ public abstract class MediaProvider extends BaseProvider {
      * @param callback     MediaProvider callback
      * @return Call
      */
-    public Call getList(final ArrayList<Media> existingList, Filters filters, final Callback callback) {
+    public Call getList(final ArrayList<Media> existingList, Filters filters, final MediaProviderCallback callback) {
         final ArrayList<Media> currentList;
         if (existingList == null) {
             currentList = new ArrayList<>();
@@ -97,52 +100,25 @@ public abstract class MediaProvider extends BaseProvider {
             filters = new Filters();
         }
 
-        if (filters.keywords != null) {
-            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.keywords));
+        if (filters.getKeywords() != null) {
+            params.add(new AbstractMap.SimpleEntry<>("keywords", filters.getKeywords()));
         }
 
-        if (filters.genre != null) {
-            params.add(new AbstractMap.SimpleEntry<>("genre", filters.genre));
+        if (filters.getGenre() != null) {
+            params.add(new AbstractMap.SimpleEntry<>("genre", filters.getGenre()));
         }
 
-        if (filters.order == Filters.Order.ASC) {
-            params.add(new AbstractMap.SimpleEntry<>("order", "1"));
-        } else {
-            params.add(new AbstractMap.SimpleEntry<>("order", "-1"));
+        params.add(new AbstractMap.SimpleEntry<>("order", filters.getOrder().getValue()));
+
+        if (filters.getLangCode() != null) {
+            params.add(new AbstractMap.SimpleEntry<>("lang", filters.getLangCode()));
         }
 
-        if (filters.langCode != null) {
-            params.add(new AbstractMap.SimpleEntry<>("lang", filters.langCode));
-        }
-
-        String sort;
-        switch (filters.sort) {
-            default:
-            case POPULARITY:
-                sort = "popularity";
-                break;
-            case YEAR:
-                sort = "year";
-                break;
-            case DATE:
-                sort = "last added";
-                break;
-            case RATING:
-                sort = "rating";
-                break;
-            case ALPHABET:
-                sort = "name";
-                break;
-            case TRENDING:
-                sort = "trending";
-                break;
-        }
-
-        params.add(new AbstractMap.SimpleEntry<>("sort", sort));
+        params.add(new AbstractMap.SimpleEntry<>("sort", filters.getSort().getParamName()));
 
         String url = apiUrls[currentApi] + itemsPath;
-        if (filters.page != null) {
-            url += filters.page;
+        if (filters.getPage() != null) {
+            url += filters.getPage();
         } else {
             url += "1";
         }
@@ -165,7 +141,7 @@ public abstract class MediaProvider extends BaseProvider {
      * @param callback       Network callback
      * @return Call
      */
-    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final Callback callback) {
+    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final MediaProviderCallback callback) {
         return enqueue(requestBuilder.build(), new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -203,7 +179,7 @@ public abstract class MediaProvider extends BaseProvider {
         });
     }
 
-    public Call getDetail(ArrayList<Media> currentList, Integer index, final Callback callback) {
+    public Call getDetail(ArrayList<Media> currentList, Integer index, final MediaProviderCallback callback) {
         Request.Builder requestBuilder = new Request.Builder();
         String url = apiUrls[currentApi] + itemDetailsPath + currentList.get(index).videoId;
         requestBuilder.url(url);
@@ -255,12 +231,16 @@ public abstract class MediaProvider extends BaseProvider {
         return new ArrayList<>();
     }
 
-    public List<NavInfo> getNavigation() {
+    public List<Sort> getSortAvailable() {
         return new ArrayList<>();
     }
 
-    public int getDefaultNavigationIndex() {
-        return DEFAULT_NAVIGATION_INDEX;
+    public Sort getSortDefault() {
+        return Sort.TRENDING;
+    }
+
+    public Order getOrderDefault() {
+        return Order.ASC;
     }
 
     public List<Genre> getGenres() {
@@ -276,73 +256,7 @@ public abstract class MediaProvider extends BaseProvider {
         return subsProvider != null;
     }
 
+    public abstract MediaProviderType getProviderType();
 
-    public interface Callback {
-        void onSuccess(Filters filters, ArrayList<Media> items, boolean changed);
-
-        void onFailure(Exception e);
-    }
-
-    public static class Filters {
-        public String keywords = null;
-        public String genre = null;
-        public Order order = Order.DESC;
-        public Sort sort = Sort.POPULARITY;
-        public Integer page = null;
-        public String langCode = "en";
-
-        public Filters() {
-        }
-
-        public Filters(Filters filters) {
-            keywords = filters.keywords;
-            genre = filters.genre;
-            order = filters.order;
-            sort = filters.sort;
-            page = filters.page;
-            langCode = filters.langCode;
-        }
-
-        public enum Order {ASC, DESC}
-
-        public enum Sort {POPULARITY, YEAR, DATE, RATING, ALPHABET, TRENDING}
-    }
-
-    public static class NavInfo {
-        private final Integer mIconId;
-        private int mId;
-        private Filters.Sort mSort;
-        private Filters.Order mDefOrder;
-        private String mLabel;
-
-        NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @Nullable @DrawableRes Integer icon) {
-            mId = id;
-            mSort = sort;
-            mDefOrder = defOrder;
-            mLabel = label;
-            mIconId = icon;
-        }
-
-        public Filters.Sort getFilter() {
-            return mSort;
-        }
-
-        public int getId() {
-            return mId;
-        }
-
-        @DrawableRes
-        public int getIcon() {
-            return mIconId;
-        }
-
-        public Filters.Order getOrder() {
-            return mDefOrder;
-        }
-
-        public String getLabel() {
-            return mLabel;
-        }
-    }
 
 }

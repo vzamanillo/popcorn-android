@@ -26,13 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butter.droid.base.BuildConfig;
-import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
+import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.TVDetailsReponse;
 import butter.droid.base.providers.media.response.TVResponse;
 import butter.droid.base.providers.media.response.models.shows.ShowDetails;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.meta.TraktProvider;
 import butter.droid.base.providers.subs.SubsProvider;
@@ -65,17 +66,16 @@ public class TVProvider extends MediaProvider {
     }
 
     @Override
-    public List<NavInfo> getNavigation() {
-        List<NavInfo> tabs = new ArrayList<>();
-        tabs.add(new NavInfo(R.id.tvshow_filter_trending, Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending), R.drawable.tvshow_filter_trending));
-        tabs.add(new NavInfo(R.id.tvshow_filter_popular_now, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.tvshow_filter_popular_now));
-        tabs.add(new NavInfo(R.id.tvshow_filter_top_rated, Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated), R.drawable.tvshow_filter_top_rated));
-        tabs.add(new NavInfo(R.id.tvshow_filter_last_updated, Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.last_updated), R.drawable.tvshow_filter_last_updated));
-        tabs.add(new NavInfo(R.id.tvshow_filter_year, Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year), R.drawable.tvshow_filter_year));
-        tabs.add(new NavInfo(R.id.tvshow_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.tvshow_filter_a_to_z));
-        return tabs;
+    public List<Sort> getSortAvailable() {
+        List<Sort> sortList = new ArrayList<>();
+        sortList.add(Sort.TRENDING);
+        sortList.add(Sort.POPULARITY);
+        sortList.add(Sort.RATING);
+        sortList.add(Sort.DATE);
+        sortList.add(Sort.YEAR);
+        sortList.add(Sort.ALPHABET);
+        return sortList;
     }
-
 
     @Override
     public List<Genre> getGenres() {
@@ -111,5 +111,10 @@ public class TVProvider extends MediaProvider {
         returnList.add(new Genre("war", R.string.genre_war));
         returnList.add(new Genre("western", R.string.genre_western));
         return returnList;
+    }
+
+    @Override
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.SHOW;
     }
 }

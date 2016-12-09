@@ -26,14 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butter.droid.base.BuildConfig;
-import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
+import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.AnimeDetailsReponse;
 import butter.droid.base.providers.media.response.AnimeResponse;
 import butter.droid.base.providers.media.response.models.anime.Anime;
 import butter.droid.base.providers.media.response.models.anime.AnimeDetails;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.subs.SubsProvider;
 import okhttp3.OkHttpClient;
 
@@ -65,12 +66,12 @@ public class AnimeProvider extends MediaProvider {
     }
 
     @Override
-    public List<NavInfo> getNavigation() {
-        List<NavInfo> tabs = new ArrayList<>();
-        tabs.add(new NavInfo(R.id.anime_filter_popular, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.anime_filter_popular));
-        tabs.add(new NavInfo(R.id.anime_filter_year, Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year), R.drawable.anime_filter_year));
-        tabs.add(new NavInfo(R.id.anime_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.anime_filter_a_to_z));
-        return tabs;
+    public List<Sort> getSortAvailable() {
+        List<Sort> sortList = new ArrayList<>();
+        sortList.add(Sort.POPULARITY);
+        sortList.add(Sort.YEAR);
+        sortList.add(Sort.ALPHABET);
+        return sortList;
     }
 
     @Override
@@ -119,5 +120,10 @@ public class AnimeProvider extends MediaProvider {
         returnList.add(new Genre("Vampire", R.string.genre_vampire));
         returnList.add(new Genre("Yuri", R.string.genre_yuri));
         return returnList;
+    }
+
+    @Override
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.ANIME;
     }
 }

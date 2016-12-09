@@ -17,56 +17,32 @@
 
 package butter.droid.base.manager.provider;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
 import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.subs.SubsProvider;
 
 public class ProviderManager {
 
-    // region IntDef
-
-    public static final int PROVIDER_TYPE_MOVIE = 0;
-    public static final int PROVIDER_TYPE_SHOW = 1;
-    public static final int PROVIDER_TYPE_ANIME = 2;
-    @Nullable
-    private final MediaProvider movieProvider;
-
-    // endregion IntDef
-    @Nullable
-    private final MediaProvider showProvider;
-    @Nullable
-    private final MediaProvider animeProvider;
     private final List<OnProviderChangeListener> listeners = new ArrayList<>();
-    @ProviderType
-    private int currentProviderType;
+    private MediaProviderType currentProviderType;
 
-    public ProviderManager(@Nullable MediaProvider movieProvider, @Nullable MediaProvider showProvider, @Nullable MediaProvider animeProvider) {
-        this.movieProvider = movieProvider;
-        this.showProvider = showProvider;
-        this.animeProvider = animeProvider;
+    private List<MediaProvider> providers = new ArrayList<>();
 
-        if (movieProvider != null) {
-            currentProviderType = PROVIDER_TYPE_MOVIE;
-        } else if (showProvider != null) {
-            currentProviderType = PROVIDER_TYPE_SHOW;
-        } else if (animeProvider != null) {
-            currentProviderType = PROVIDER_TYPE_ANIME;
-        } else {
-            throw new IllegalStateException("No media providers vere provider");
-        }
+    public ProviderManager() {
     }
 
-    @ProviderType
-    public int getCurrentMediaProviderType() {
+    public List<MediaProvider> getProviders() {
+        return providers;
+    }
+
+    public MediaProviderType getCurrentMediaProviderType() {
         return currentProviderType;
     }
 
@@ -77,7 +53,7 @@ public class ProviderManager {
     }
 
     @MainThread
-    public void setCurrentProviderType(@ProviderType int providerType) {
+    public void setCurrentProviderType(MediaProviderType providerType) {
         if (getMediaProvider(providerType) != null) {
             if (this.currentProviderType != providerType) {
                 this.currentProviderType = providerType;
@@ -93,32 +69,27 @@ public class ProviderManager {
     }
 
     @Nullable
-    public MediaProvider getMediaProvider(@ProviderType int providerType) {
-        switch (providerType){
-            case PROVIDER_TYPE_ANIME:
-                return animeProvider;
-            case PROVIDER_TYPE_MOVIE:
-                return movieProvider;
-            case PROVIDER_TYPE_SHOW:
-                return showProvider;
-            default:
-                return null;
+    public MediaProvider getMediaProvider(MediaProviderType providerType) {
+        for (MediaProvider provider : providers) {
+            if (provider.getProviderType() == providerType) {
+                return provider;
+            }
         }
+        return null;
     }
 
-    public boolean hasProvider(@ProviderType int providerType) {
+    public boolean hasProvider(MediaProviderType providerType) {
         return getMediaProvider(providerType) != null;
     }
 
     public void addProviderListener(@NonNull OnProviderChangeListener listener) {
-        //noinspection ConstantConditions
-        if (listener != null && !listeners.contains(listener)) {
+        if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
     }
 
     public void removeProviderListener(@NonNull OnProviderChangeListener listener) {
-        if (listener != null && listeners.size() > 0) {
+        if (listeners.size() > 0) {
             listeners.remove(listener);
         }
     }
@@ -131,14 +102,10 @@ public class ProviderManager {
         return getCurrentMediaProvider().hasSubsProvider();
     }
 
-    @IntDef({PROVIDER_TYPE_MOVIE, PROVIDER_TYPE_SHOW, PROVIDER_TYPE_ANIME})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ProviderType {
-    }
 
     public interface OnProviderChangeListener {
         @MainThread
-        void onProviderChanged(@ProviderType int provider);
+        void onProviderChanged(MediaProviderType mediaProviderType);
     }
 
 }

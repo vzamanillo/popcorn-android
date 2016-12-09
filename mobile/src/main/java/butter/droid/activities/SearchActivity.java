@@ -27,7 +27,6 @@ import android.view.MenuItem;
 
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
-import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.fragments.MediaListFragment;
 import butter.droid.utils.ToolbarUtils;
 import butterknife.BindView;
@@ -39,8 +38,6 @@ import butterknife.BindView;
  * It must be started with a provider id, which then gets forwarded to the overview fragment
  */
 public class SearchActivity extends ButterBaseActivity {
-
-    public static final String EXTRA_PROVIDER = "extra_provider";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -77,8 +74,7 @@ public class SearchActivity extends ButterBaseActivity {
         }
 
         //create and add the media fragment
-        mFragment = MediaListFragment.newInstance(MediaListFragment.Mode.SEARCH, MediaProvider.Filters.Sort.POPULARITY,
-                MediaProvider.Filters.Order.DESC);
+        mFragment = MediaListFragment.newInstance(mFragment.getMediaProvider(), MediaListFragment.Mode.SEARCH);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, mFragment).commit();
     }
 

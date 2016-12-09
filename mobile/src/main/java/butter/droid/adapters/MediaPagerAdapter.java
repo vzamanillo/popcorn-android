@@ -19,41 +19,33 @@ package butter.droid.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.view.ViewGroup;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butter.droid.R;
 import butter.droid.base.ButterApplication;
-import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.utils.LocaleUtils;
 import butter.droid.fragments.MediaGenreSelectionFragment;
 import butter.droid.fragments.MediaListFragment;
 
-public class MediaPagerAdapter extends FragmentPagerAdapter {
+public class MediaPagerAdapter extends FragmentStatePagerAdapter {
 
-    private FragmentManager mFragmentManager;
-    private Map<Integer, String> mFragTags = new HashMap<>();
-    private final List<MediaProvider.NavInfo> mTabs;
-    private MediaProvider mProvider;
-    private String mGenre;
+    //private String mGenre;
     private int mHasGenreTabs = 0;
     private Fragment mGenreFragment;
+    private List<MediaListFragment> mFragments;
 
-    public MediaPagerAdapter(MediaProvider provider, FragmentManager fm, List<MediaProvider.NavInfo> tabs) {
+    public MediaPagerAdapter(FragmentManager fm, List<MediaListFragment> fragments) {
         super(fm);
-        mFragmentManager = fm;
-        mTabs = tabs;
-        mProvider = provider;
-        mHasGenreTabs = (mProvider.getGenres() != null && mProvider.getGenres().size() > 0 ? 1 : 0);
+        mFragments = fragments;
+        //mHasGenreTabs = (getmMediaProvider().getGenres() != null && provider.getGenres().size() > 0 ? 1 : 0);
+
     }
 
     @Override
     public int getCount() {
-        return mTabs.size() + mHasGenreTabs;
+        return mFragments.size() + mHasGenreTabs;
     }
 
     @Override
@@ -62,7 +54,9 @@ public class MediaPagerAdapter extends FragmentPagerAdapter {
             return ButterApplication.getAppContext().getString(R.string.genres).toUpperCase(LocaleUtils.getCurrent());
         }
         position -= mHasGenreTabs;
-        return mTabs.get(position).getLabel().toUpperCase(LocaleUtils.getCurrent());
+        return ButterApplication.getAppContext()
+                .getString(mFragments.get(position).getMediaProvider().getProviderType().getTitle())
+                .toUpperCase(LocaleUtils.getCurrent());
     }
 
     @Override
@@ -75,48 +69,21 @@ public class MediaPagerAdapter extends FragmentPagerAdapter {
         }
 
         position -= mHasGenreTabs;
-        return MediaListFragment.newInstance(MediaListFragment.Mode.NORMAL, mTabs.get(position).getFilter(), mTabs.get(position).getOrder(), mGenre);
-    }
 
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Object obj = super.instantiateItem(container, position);
-        if (obj instanceof Fragment) {
-            Fragment f = (Fragment) obj;
-            String tag = f.getTag();
-            mFragTags.put(position, tag);
-        }
-
-        if (obj instanceof MediaGenreSelectionFragment && mGenreFragment != null) {
-            return mGenreFragment;
-        }
-
-        return obj;
-    }
-
-    public MediaListFragment getMediaListFragment(int position) {
-        if (mFragTags.size() > position) {
-            String tag = mFragTags.get(position);
-            if (tag != null) {
-                Fragment frag = mFragmentManager.findFragmentByTag(tag);
-                if (frag instanceof MediaListFragment)
-                    return (MediaListFragment) frag;
-            }
-        }
-        return null;
+        return mFragments.get(position);
     }
 
     private MediaGenreSelectionFragment.Listener mMediaGenreSelectionFragment = new MediaGenreSelectionFragment.Listener() {
         @Override
         public void onGenreSelected(String genre) {
-            mGenre = genre;
-            mProvider.cancel();
+            //mGenre = genre;
             for (int i = 0; i < getCount(); i++) {
-                MediaListFragment mediaListFragment = getMediaListFragment(i);
-                if (mediaListFragment != null)
+                MediaListFragment mediaListFragment = mFragments.get(i);
+                if (mediaListFragment != null) {
+                    mediaListFragment.getMediaProvider().cancel();
                     mediaListFragment.changeGenre(genre);
+                }
             }
         }
     };
-
 }

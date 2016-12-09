@@ -58,7 +58,7 @@ public class TraktProvider extends MetaProvider {
      * Get metadata from Trakt for a movie
      *
      * @param imdbId   IMDb id to get metadata for
-     * @param callback Callback
+     * @param callback MediaProviderCallback
      */
     @Override
     public void getMovieMeta(final String imdbId, Callback callback) {
@@ -99,7 +99,7 @@ public class TraktProvider extends MetaProvider {
      * @param imdbId   IMDb id to get metadata for
      * @param season   Season
      * @param episode  Episode
-     * @param callback Callback
+     * @param callback MediaProviderCallback
      */
     @Override
     public void getEpisodeMeta(final String imdbId, final int season, final int episode, Callback callback) {

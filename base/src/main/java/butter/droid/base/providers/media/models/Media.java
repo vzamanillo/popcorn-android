@@ -24,7 +24,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.providers.media.type.MediaProviderType;
 
 public abstract class Media implements Parcelable {
 
@@ -64,8 +64,7 @@ public abstract class Media implements Parcelable {
         }
     }
 
-    @ProviderManager.ProviderType
-    public abstract int getProviderType();
+    public abstract MediaProviderType getProviderType();
 
     @Override
     public int describeContents() {

@@ -23,7 +23,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.providers.media.type.MediaProviderType;
 
 public class Movie extends Media implements Parcelable {
     @SuppressWarnings("unused")
@@ -49,9 +49,10 @@ public class Movie extends Media implements Parcelable {
     }
 
     @Override
-    public int getProviderType() {
-        return ProviderManager.PROVIDER_TYPE_MOVIE;
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.MOVIE;
     }
+
     private Movie(Parcel in) {
         super(in);
         trailer = in.readString();

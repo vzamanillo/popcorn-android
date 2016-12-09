@@ -22,7 +22,7 @@ import android.os.Parcelable;
 
 import java.util.LinkedList;
 
-import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.providers.media.type.MediaProviderType;
 
 public class Show extends Media implements Parcelable {
     @SuppressWarnings("unused")
@@ -54,8 +54,8 @@ public class Show extends Media implements Parcelable {
     }
 
     @Override
-    public int getProviderType() {
-        return ProviderManager.PROVIDER_TYPE_SHOW;
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.SHOW;
     }
 
     private Show(Parcel in) {

@@ -44,10 +44,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-
 import javax.inject.Inject;
 
 import butter.droid.BuildConfig;
@@ -61,15 +57,18 @@ import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Movie;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.PrefUtils;
-import butter.droid.base.utils.ProviderUtils;
 import butter.droid.base.vpn.VPNManager;
 import butter.droid.fragments.MediaContainerFragment;
 import butter.droid.fragments.NavigationDrawerFragment;
 import butter.droid.utils.ToolbarUtils;
 import butter.droid.widget.ScrimInsetsFrameLayout;
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import timber.log.Timber;
 
 /**
@@ -147,8 +146,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
             return;
         }
 
-        @ProviderManager.ProviderType int provider = PrefUtils.get(this, Prefs.DEFAULT_PROVIDER, ProviderManager.PROVIDER_TYPE_MOVIE);
-        mNavigationDrawerFragment.selectItem(provider);
+        MediaProviderType provider = MediaProviderType.valueOf(PrefUtils.get(this, Prefs.DEFAULT_PROVIDER, MediaProviderType.MOVIE.name()));
         showProvider(provider);
     }
 
@@ -161,7 +159,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
     protected void onResume() {
         super.onResume();
 
-        setTitle(ProviderUtils.getProviderTitle(providerManager.getCurrentMediaProviderType()));
+        setTitle(providerManager.getCurrentMediaProviderType().getTitle());
         supportInvalidateOptionsMenu();
 
         mNavigationDrawerFragment.initItems();
@@ -236,7 +234,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
 
 
     @Override
-    public void onProviderChanged(@ProviderManager.ProviderType int provider) {
+    public void onProviderChanged(MediaProviderType provider) {
         showProvider(provider);
     }
 
@@ -273,8 +271,12 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
         }
     }
 
-    private void showProvider(@ProviderManager.ProviderType int provider) {
-        setTitle(ProviderUtils.getProviderTitle(provider));
+    private void showProvider(MediaProviderType providerType) {
+
+        setTitle(providerType.getTitle());
+
+        providerManager.setCurrentProviderType(providerType);
+
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
 

@@ -23,7 +23,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.meta.MetaProvider;
 
 public class Episode extends Media implements Parcelable {
@@ -55,8 +55,8 @@ public class Episode extends Media implements Parcelable {
     }
 
     @Override
-    public int getProviderType() {
-        return ProviderManager.PROVIDER_TYPE_SHOW;
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.SHOW;
     }
     private Episode(Parcel in) {
         super(in);

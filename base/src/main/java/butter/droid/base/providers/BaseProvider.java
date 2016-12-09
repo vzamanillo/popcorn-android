@@ -21,6 +21,7 @@ import android.support.annotation.CallSuper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.AbstractMap;
@@ -37,7 +38,7 @@ import okhttp3.Request;
  * <p/>
  * Base class for providers, has code to enqueue network requests to the OkHttpClient
  */
-public abstract class BaseProvider {
+public abstract class BaseProvider implements Serializable {
 
     private final OkHttpClient client;
     protected ObjectMapper mapper;
@@ -55,7 +56,7 @@ public abstract class BaseProvider {
      * Enqueue request with callback
      *
      * @param request         Request
-     * @param requestCallback Callback
+     * @param requestCallback MediaProviderCallback
      * @return Call
      */
     protected Call enqueue(Request request, Callback requestCallback) {

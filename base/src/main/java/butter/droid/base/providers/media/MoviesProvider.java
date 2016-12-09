@@ -26,12 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butter.droid.base.BuildConfig;
-import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
+import butter.droid.base.providers.media.callback.MediaProviderCallback;
+import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.MovieResponse;
 import butter.droid.base.providers.media.response.models.movies.Movie;
+import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.subs.SubsProvider;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -53,7 +55,7 @@ public class MoviesProvider extends MediaProvider {
     }
 
     @Override
-    public Call getDetail(ArrayList<Media> currentList, Integer index, Callback callback) {
+    public Call getDetail(ArrayList<Media> currentList, Integer index, MediaProviderCallback callback) {
         ArrayList<Media> returnList = new ArrayList<>();
         returnList.add(currentList.get(index));
         callback.onSuccess(null, returnList, true);
@@ -66,15 +68,15 @@ public class MoviesProvider extends MediaProvider {
     }
 
     @Override
-    public List<NavInfo> getNavigation() {
-        List<NavInfo> tabs = new ArrayList<>();
-        tabs.add(new NavInfo(R.id.movie_filter_trending, Filters.Sort.TRENDING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.trending), R.drawable.movie_filter_trending));
-        tabs.add(new NavInfo(R.id.movie_filter_popular_now, Filters.Sort.POPULARITY, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.popular), R.drawable.movie_filter_popular_now));
-        tabs.add(new NavInfo(R.id.movie_filter_top_rated, Filters.Sort.RATING, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.top_rated), R.drawable.movie_filter_top_rated));
-        tabs.add(new NavInfo(R.id.movie_filter_release_date, Filters.Sort.DATE, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.release_date), R.drawable.movie_filter_release_date));
-        tabs.add(new NavInfo(R.id.movie_filter_year, Filters.Sort.YEAR, Filters.Order.DESC, ButterApplication.getAppContext().getString(R.string.year), R.drawable.movie_filter_year));
-        tabs.add(new NavInfo(R.id.movie_filter_a_to_z, Filters.Sort.ALPHABET, Filters.Order.ASC, ButterApplication.getAppContext().getString(R.string.a_to_z), R.drawable.movie_filter_a_to_z));
-        return tabs;
+    public List<Sort> getSortAvailable() {
+        List<Sort> sortList = new ArrayList<>();
+        sortList.add(Sort.TRENDING);
+        sortList.add(Sort.POPULARITY);
+        sortList.add(Sort.RATING);
+        sortList.add(Sort.DATE);
+        sortList.add(Sort.YEAR);
+        sortList.add(Sort.ALPHABET);
+        return sortList;
     }
 
     @Override
@@ -111,5 +113,10 @@ public class MoviesProvider extends MediaProvider {
         returnList.add(new Genre("war", R.string.genre_war));
         returnList.add(new Genre("western", R.string.genre_western));
         return returnList;
+    }
+
+    @Override
+    public MediaProviderType getProviderType() {
+        return MediaProviderType.MOVIE;
     }
 }
