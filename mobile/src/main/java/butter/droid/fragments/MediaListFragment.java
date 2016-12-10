@@ -58,9 +58,7 @@ import butter.droid.fragments.dialog.LoadingDetailDialogFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import hugo.weaving.DebugLog;
-import okhttp3.Call;
 import okhttp3.OkHttpClient;
-import timber.log.Timber;
 
 /**
  * This fragment is the main screen for viewing a collection of media items.
@@ -114,7 +112,6 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
 
     private int mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
 
-    private Call mCurrentCall;
     private int mPage = 1;
     private Filters mFilters = new Filters();
 
@@ -130,86 +127,47 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     private MediaProviderCallback mCallback = new MediaProviderCallback() {
         @Override
         @DebugLog
-        public void onSuccess(Filters filters, final ArrayList<Media> items, boolean changed) {
+        public void onSuccess(Filters filters, final ArrayList<Media> items) {
             items.removeAll(mItems);
-            if (items.size() == 0) {
-                mEndOfListReached = true;
-                changed = false;
-            }
-
-            if (!changed) {
-                setState(State.LOADED);
-                return;
-            }
-
-            ThreadUtils.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setState(State.LOADED);
+            mEndOfListReached = items.size() == 0;
+            if (!mEndOfListReached) {
+                mItems.addAll(items);
+                if (isAdded()) {
+                    mPage = mPage + 1;
+                    ThreadUtils.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.setItems(mItems);
+                            mPreviousTotal = mTotalItemCount = mAdapter.getItemCount();
+                        }
+                    });
                 }
-            });
-            mItems.addAll(items);
-
-            //fragment may be detached, so we dont want to update the UI
-            if (!isAdded())
-                return;
-
-            mEndOfListReached = false;
-
-            mPage = mPage + 1;
-            ThreadUtils.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.setItems(mItems);
-                    mPreviousTotal = mTotalItemCount = mAdapter.getItemCount();
-                }
-            });
+            }
+            setState(State.LOADED);
         }
 
         @Override
         @DebugLog
         public void onFailure(Exception e) {
-            if (isDetached() || e.getMessage().equals("Canceled")) {
-                ThreadUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mAdapter == null) {
-                            return;
-                        }
-
-                        mAdapter.removeLoading();
-                        setState(State.LOADED);
-                    }
-                });
-            } else if (e.getMessage() != null && e.getMessage().equals(ButterApplication.getAppContext().getString(R.string.movies_error))) {
-                mEndOfListReached = true;
-                ThreadUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mAdapter == null) {
-                            return;
-                        }
-
-                        mAdapter.removeLoading();
-                        setState(State.LOADED);
-                    }
-                });
-            } else {
+            if (!isDetached() || !e.getMessage().equals("Canceled")) {
                 e.printStackTrace();
-                Timber.e(e.getMessage());
                 if (mRetries > 1) {
                     ThreadUtils.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Snackbar.make(mRootView, R.string.unknown_error, Snackbar.LENGTH_SHORT).show();
-                            setState(State.LOADED);
                         }
                     });
                 } else {
-                    mCurrentCall = mMediaProvider.getList(mItems, mFilters, this);
+                    mMediaProvider.getList(mItems, mFilters, this);
                 }
                 mRetries++;
             }
+            mEndOfListReached = true;
+            if (mAdapter != null) {
+                mAdapter.removeLoading();
+            }
+            setState(State.LOADED);
         }
     };
     private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -231,7 +189,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                     mLoadingTreshold)) {
 
                 mFilters.setPage(mPage);
-                mCurrentCall = mMediaProvider.getList(mItems, mFilters, mCallback);
+                mMediaProvider.getList(mItems, mFilters, mCallback);
 
                 mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
                 setState(State.LOADING_PAGE);
@@ -239,6 +197,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
         }
     };
 
+    //TODO igual tenemos que volver al modelo anterior del ProviderManager
     public static MediaListFragment newInstance(MediaProvider mediaProvider, Mode mode) {
         return newInstance(mediaProvider, mode, null);
     }
@@ -289,23 +248,16 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
 
     public void changeGenre(String genre) {
         if (!(mFilters.getGenre() == null ? "" : mFilters.getGenre()).equals(genre == null ? "" : genre)) {
-            if (mCurrentCall != null)
-                client.dispatcher().executorService().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCurrentCall.cancel();
-                    }
-                });
+
+            setState(State.LOADING);
 
             mItems.clear();
             mAdapter.clearItems();
 
             mFilters.setGenre(genre);
             mFilters.setPage(1);
-            mCurrentCall = mMediaProvider.getList(mFilters, mCallback);
+            mMediaProvider.getList(mFilters, mCallback);
         }
-
-        setState(State.LOADING);
     }
 
     @Override
@@ -344,7 +296,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
 
         //don't load initial data in search mode
         if (mode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
-            mCurrentCall = mMediaProvider.getList(mFilters, mCallback);/* fetch new items */
+            mMediaProvider.getList(mFilters, mCallback);/* fetch new items */
             setState(State.LOADING);
         } else updateUI();
     }
@@ -358,11 +310,6 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
         ThreadUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //animate recyclerview to full alpha
-                //		if (mRecyclerView.getAlpha() != 1.0f)
-                //			mRecyclerView.animate().alpha(1.0f).setDuration(100).start();
-
-                //update loading message based on state
                 switch (mState) {
                     case LOADING_DETAIL:
                         mLoadingMessage = R.string.loading_details;
@@ -370,15 +317,6 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                     case SEARCHING:
                         mLoadingMessage = R.string.searching;
                         break;
-                    default:
-                        int providerMessage = mMediaProvider.getLoadingMessage();
-                        mLoadingMessage = providerMessage > 0 ? providerMessage : R.string.loading_data;
-                        break;
-                }
-
-                switch (mState) {
-                    case LOADING_DETAIL:
-                    case SEARCHING:
                     case LOADING:
                         if (mAdapter.isLoading()) mAdapter.removeLoading();
                         //show the progress bar
@@ -392,6 +330,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                         mProgressOverlay.setVisibility(View.GONE);
                         boolean hasItems = mItems.size() > 0;
                         //show either the recyclerview or the empty view
+                        mRecyclerView.animate().alpha(1.0f).setDuration(100).start();
                         mRecyclerView.setVisibility(hasItems ? View.VISIBLE : View.INVISIBLE);
                         mEmptyView.setVisibility(hasItems ? View.GONE : View.VISIBLE);
                         break;
@@ -400,6 +339,10 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                         if (!mAdapter.isLoading()) mAdapter.addLoading();
                         mEmptyView.setVisibility(View.GONE);
                         mRecyclerView.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        int providerMessage = getMediaProvider().getLoadingMessage();
+                        mLoadingMessage = providerMessage > 0 ? providerMessage : R.string.loading_data;
                         break;
                 }
                 updateLoadingMessage();
@@ -459,13 +402,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
             return;
         }
 
-        if (mCurrentCall != null)
-            client.dispatcher().executorService().execute(new Runnable() {
-                @Override
-                public void run() {
-                    mCurrentCall.cancel();
-                }
-            });
+        getMediaProvider().cancel();
 
         mEndOfListReached = false;
 
@@ -481,7 +418,7 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
         mFilters.setKeywords(searchQuery);
         mFilters.setPage(1);
         mPage = 1;
-        mCurrentCall = mMediaProvider.getList(mFilters, mCallback);
+        mMediaProvider.getList(mFilters, mCallback);
     }
 
 

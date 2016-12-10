@@ -34,6 +34,7 @@ public class MediaPagerAdapter extends FragmentStatePagerAdapter {
     //private String mGenre;
     private int mHasGenreTabs = 0;
     private Fragment mGenreFragment;
+    private Fragment mSortFragment;
     private List<MediaListFragment> mFragments;
 
     public MediaPagerAdapter(FragmentManager fm, List<MediaListFragment> fragments) {
@@ -63,7 +64,7 @@ public class MediaPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         if (mHasGenreTabs > 0 && position == 0) {
             if (mGenreFragment == null) {
-                mGenreFragment = MediaGenreSelectionFragment.newInstance(mMediaGenreSelectionFragment);
+                mGenreFragment = MediaGenreSelectionFragment.newInstance(mMediaGenreSelectionFragmentListener);
             }
             return mGenreFragment;
         }
@@ -73,7 +74,7 @@ public class MediaPagerAdapter extends FragmentStatePagerAdapter {
         return mFragments.get(position);
     }
 
-    private MediaGenreSelectionFragment.Listener mMediaGenreSelectionFragment = new MediaGenreSelectionFragment.Listener() {
+    private MediaGenreSelectionFragment.Listener mMediaGenreSelectionFragmentListener = new MediaGenreSelectionFragment.Listener() {
         @Override
         public void onGenreSelected(String genre) {
             //mGenre = genre;

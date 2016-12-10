@@ -6,7 +6,7 @@ import butter.droid.base.providers.media.filters.Filters;
 import butter.droid.base.providers.media.models.Media;
 
 public interface MediaProviderCallback {
-    void onSuccess(Filters filters, ArrayList<Media> items, boolean changed);
+    void onSuccess(Filters filters, ArrayList<Media> items);
 
     void onFailure(Exception e);
 }

@@ -64,17 +64,18 @@ public class MediaContainerFragment extends Fragment {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
-
             @Override
             public void onPageSelected(int position) {
                 mSelection = position;
+                //providerManager.setCurrentProviderType(providerManager.getProviders().get(position).getProviderType());
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
-        //mSelection = mProvider.getDefaultNavigationIndex();
+        //FIXME does not preserve the tab position on rotate
+        mSelection = providerManager.getCurrentMediaProvider().getDefaultNavigationIndex();
     }
 
     @Override

@@ -53,6 +53,7 @@ public abstract class MediaProvider extends BaseProvider {
     @Nullable
     private final SubsProvider subsProvider;
 
+    private static final int DEFAULT_NAVIGATION_INDEX = 1;
     private String[] apiUrls = new String[0];
     private String itemsPath = "";
     private String itemDetailsPath = "";
@@ -73,8 +74,8 @@ public abstract class MediaProvider extends BaseProvider {
      * @param filters  Filters the provider can use to sort or search
      * @param callback MediaProvider callback
      */
-    public Call getList(Filters filters, MediaProviderCallback callback) {
-        return getList(null, filters, callback);
+    public void getList(Filters filters, MediaProviderCallback callback) {
+        getList(null, filters, callback);
     }
 
     /**
@@ -83,9 +84,8 @@ public abstract class MediaProvider extends BaseProvider {
      * @param existingList Input the current list so it can be extended
      * @param filters      Filters the provider can use to sort or search
      * @param callback     MediaProvider callback
-     * @return Call
      */
-    public Call getList(final ArrayList<Media> existingList, Filters filters, final MediaProviderCallback callback) {
+    public void getList(final ArrayList<Media> existingList, Filters filters, final MediaProviderCallback callback) {
         final ArrayList<Media> currentList;
         if (existingList == null) {
             currentList = new ArrayList<>();
@@ -130,7 +130,7 @@ public abstract class MediaProvider extends BaseProvider {
 
         Timber.d(this.getClass().getSimpleName(), "Making request to: " + url);
 
-        return fetchList(currentList, requestBuilder, filters, callback);
+        fetchList(currentList, requestBuilder, filters, callback);
     }
 
     /**
@@ -139,10 +139,9 @@ public abstract class MediaProvider extends BaseProvider {
      * @param currentList    Current shown list to be extended
      * @param requestBuilder Request to be executed
      * @param callback       Network callback
-     * @return Call
      */
-    private Call fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final MediaProviderCallback callback) {
-        return enqueue(requestBuilder.build(), new okhttp3.Callback() {
+    private void fetchList(final ArrayList<Media> currentList, final Request.Builder requestBuilder, final Filters filters, final MediaProviderCallback callback) {
+        enqueue(requestBuilder.build(), new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 String url = requestBuilder.build().url().toString();
@@ -169,9 +168,8 @@ public abstract class MediaProvider extends BaseProvider {
                     if (responseStr.isEmpty()) {
                         onFailure(call, new IOException("Empty response"));
                     }
-                    int actualSize = currentList.size();
                     ArrayList<Media> responseItems = getResponseFormattedList(responseStr, currentList);
-                    callback.onSuccess(filters, responseItems, responseItems.size() > actualSize);
+                    callback.onSuccess(filters, responseItems);
                     return;
                 }
                 onFailure(call, new IOException("Couldn't connect to API"));
@@ -179,14 +177,14 @@ public abstract class MediaProvider extends BaseProvider {
         });
     }
 
-    public Call getDetail(ArrayList<Media> currentList, Integer index, final MediaProviderCallback callback) {
+    public void getDetail(ArrayList<Media> currentList, Integer index, final MediaProviderCallback callback) {
         Request.Builder requestBuilder = new Request.Builder();
         String url = apiUrls[currentApi] + itemDetailsPath + currentList.get(index).videoId;
         requestBuilder.url(url);
 
         Timber.d(this.getClass().getSimpleName(), "Making request to: " + url);
 
-        return enqueue(requestBuilder.build(), new okhttp3.Callback() {
+        enqueue(requestBuilder.build(), new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 callback.onFailure(e);
@@ -205,7 +203,7 @@ public abstract class MediaProvider extends BaseProvider {
 
                         ArrayList<Media> formattedData = getResponseDetailsFormattedList(responseStr);
                         if (formattedData.size() > 0) {
-                            callback.onSuccess(null, formattedData, true);
+                            callback.onSuccess(null, formattedData);
                             return;
                         }
                         callback.onFailure(new IllegalStateException("Empty list"));
@@ -231,8 +229,19 @@ public abstract class MediaProvider extends BaseProvider {
         return new ArrayList<>();
     }
 
+    public int getDefaultNavigationIndex() {
+        return DEFAULT_NAVIGATION_INDEX;
+    }
+
     public List<Sort> getSortAvailable() {
-        return new ArrayList<>();
+        List<Sort> sortList = new ArrayList<>();
+        sortList.add(Sort.TRENDING);
+        sortList.add(Sort.POPULARITY);
+        sortList.add(Sort.RATING);
+        sortList.add(Sort.DATE);
+        sortList.add(Sort.YEAR);
+        sortList.add(Sort.ALPHABET);
+        return sortList;
     }
 
     public Sort getSortDefault() {
@@ -240,7 +249,7 @@ public abstract class MediaProvider extends BaseProvider {
     }
 
     public Order getOrderDefault() {
-        return Order.ASC;
+        return Order.DESC;
     }
 
     public List<Genre> getGenres() {

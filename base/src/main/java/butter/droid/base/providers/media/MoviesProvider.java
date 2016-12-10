@@ -28,14 +28,12 @@ import java.util.List;
 import butter.droid.base.BuildConfig;
 import butter.droid.base.R;
 import butter.droid.base.providers.media.callback.MediaProviderCallback;
-import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.MovieResponse;
 import butter.droid.base.providers.media.response.models.movies.Movie;
 import butter.droid.base.providers.media.type.MediaProviderType;
 import butter.droid.base.providers.subs.SubsProvider;
-import okhttp3.Call;
 import okhttp3.OkHttpClient;
 
 public class MoviesProvider extends MediaProvider {
@@ -55,28 +53,15 @@ public class MoviesProvider extends MediaProvider {
     }
 
     @Override
-    public Call getDetail(ArrayList<Media> currentList, Integer index, MediaProviderCallback callback) {
+    public void getDetail(ArrayList<Media> currentList, Integer index, MediaProviderCallback callback) {
         ArrayList<Media> returnList = new ArrayList<>();
         returnList.add(currentList.get(index));
-        callback.onSuccess(null, returnList, true);
-        return null;
+        callback.onSuccess(null, returnList);
     }
 
     @Override
     public int getLoadingMessage() {
         return R.string.loading_movies;
-    }
-
-    @Override
-    public List<Sort> getSortAvailable() {
-        List<Sort> sortList = new ArrayList<>();
-        sortList.add(Sort.TRENDING);
-        sortList.add(Sort.POPULARITY);
-        sortList.add(Sort.RATING);
-        sortList.add(Sort.DATE);
-        sortList.add(Sort.YEAR);
-        sortList.add(Sort.ALPHABET);
-        return sortList;
     }
 
     @Override

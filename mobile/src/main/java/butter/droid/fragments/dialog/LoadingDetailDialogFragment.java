@@ -100,7 +100,7 @@ public class LoadingDetailDialogFragment extends DialogFragment {
         final Media media = currentList.get(position);
         providerManager.getCurrentMediaProvider().getDetail(currentList, position, new MediaProviderCallback() {
                     @Override
-                    public void onSuccess(Filters filters, ArrayList<Media> items, boolean changed) {
+                    public void onSuccess(Filters filters, ArrayList<Media> items) {
                         if (!isAdded()) return;
                         if (items.size() <= 0) return;
 
@@ -113,24 +113,22 @@ public class LoadingDetailDialogFragment extends DialogFragment {
                                 if (!mSavedInstanceState) dismiss();
                             }
                         });
-
                     }
 
                     @Override
                     public void onFailure(Exception e) {
                         if (!e.getMessage().equals("Canceled")) {
                             e.printStackTrace();
-                            ThreadUtils.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mCallback.onDetailLoadFailure();
-                                    if (!mSavedInstanceState) dismiss();
-                                }
-                            });
-                        }
+                        ThreadUtils.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCallback.onDetailLoadFailure();
+                                if (!mSavedInstanceState) dismiss();
+                            }
+                        });
                     }
                 }
-
+                }
         );
     }
 
@@ -147,6 +145,4 @@ public class LoadingDetailDialogFragment extends DialogFragment {
 
         ArrayList<Media> getCurrentList();
     }
-
-
 }

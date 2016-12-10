@@ -27,7 +27,6 @@ import java.util.List;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.R;
-import butter.droid.base.providers.media.filters.Sort;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.TVDetailsReponse;
@@ -63,18 +62,6 @@ public class TVProvider extends MediaProvider {
     public ArrayList<Media> getResponseDetailsFormattedList(String responseStr) throws IOException {
         ShowDetails detail = mapper.readValue(responseStr, ShowDetails.class);
         return new TVDetailsReponse().formatDetailForPopcorn(detail, this, getSubsProvider(), metaProvider);
-    }
-
-    @Override
-    public List<Sort> getSortAvailable() {
-        List<Sort> sortList = new ArrayList<>();
-        sortList.add(Sort.TRENDING);
-        sortList.add(Sort.POPULARITY);
-        sortList.add(Sort.RATING);
-        sortList.add(Sort.DATE);
-        sortList.add(Sort.YEAR);
-        sortList.add(Sort.ALPHABET);
-        return sortList;
     }
 
     @Override
