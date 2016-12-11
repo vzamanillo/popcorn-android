@@ -58,10 +58,7 @@ public class Format {
      */
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Format)) {
-            return false;
-        }
-        return ((Format) object).mId == mId;
+        return object instanceof Format && ((Format) object).mId == mId;
     }
 
 }

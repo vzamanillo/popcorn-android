@@ -49,11 +49,6 @@ import android.os.Handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -71,9 +66,15 @@ import javax.inject.Singleton;
 import butter.droid.base.BuildConfig;
 import butter.droid.base.Constants;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.utils.ArchitectureUtils;
 import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.VersionUtils;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 
@@ -113,7 +114,7 @@ public class ButterUpdateManager extends Observable {
     private String mAbi;
 
     private Listener mListener;
-    Callback mCallback = new Callback() {
+    private Callback mCallback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
             if (mCurrentUrl < DATA_URLS.length - 1) {
@@ -203,12 +204,12 @@ public class ButterUpdateManager extends Observable {
             e.printStackTrace();
         }
 
-        lastUpdate = PrefUtils.get(mContext, LAST_UPDATE_KEY, 0l);
+        lastUpdate = PrefUtils.get(mContext, LAST_UPDATE_KEY, 0L);
         NOTIFICATION_ID += crc32(mPackageName);
 
         ApplicationInfo appinfo = context.getApplicationInfo();
 
-        if (new File(appinfo.sourceDir).lastModified() > PrefUtils.get(mContext, SHA1_TIME, 0l)) {
+        if (new File(appinfo.sourceDir).lastModified() > PrefUtils.get(mContext, SHA1_TIME, 0L)) {
             PrefUtils.save(mContext, SHA1_KEY, SHA1(appinfo.sourceDir));
             PrefUtils.save(mContext, SHA1_TIME, System.currentTimeMillis());
 
@@ -283,11 +284,7 @@ public class ButterUpdateManager extends Observable {
 
             if (!forced && BuildConfig.GIT_BRANCH.contains("local")) return;
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                mAbi = Build.CPU_ABI.toLowerCase(Locale.US);
-            } else {
-                mAbi = Build.SUPPORTED_ABIS[0].toLowerCase(Locale.US);
-            }
+            mAbi = ArchitectureUtils.getAbi();
 
             if (mPackageName.contains("tv")) {
                 mVariantStr = "tv";

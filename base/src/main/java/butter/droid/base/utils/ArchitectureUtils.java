@@ -1,11 +1,13 @@
-package butter.droid.base.compat;
+package butter.droid.base.utils;
 
 import android.annotation.TargetApi;
 import android.os.Build;
 
 import java.util.Locale;
 
-public class SupportedArchitectures extends Compatibility {
+import butter.droid.base.utils.compat.Compatibility;
+
+public class ArchitectureUtils extends Compatibility {
 
     /**
      * The most preferred ABI is the first element in the list.

@@ -35,7 +35,7 @@ public class VideoStream {
      */
     public VideoStream(String streamStr) {
         String[] args = streamStr.split("&");
-        Map<String, String> argMap = new HashMap<String, String>();
+        Map<String, String> argMap = new HashMap<>();
         for (String arg : args) {
             String[] argsValues = arg.split("=");
             if (argsValues != null) {

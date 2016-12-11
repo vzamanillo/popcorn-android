@@ -26,7 +26,6 @@ import android.os.Build;
 
 import butter.droid.base.BuildConfig;
 import butter.droid.base.ButterApplication;
-import butter.droid.base.compat.SupportedArchitectures;
 
 public class VersionUtils {
 
@@ -50,7 +49,7 @@ public class VersionUtils {
     public static boolean isUsingCorrectBuild() {
         String buildAbi = getBuildAbi();
         return BuildConfig.GIT_BRANCH.equalsIgnoreCase("local") ||
-                SupportedArchitectures.getAbi().equalsIgnoreCase(buildAbi);
+                ArchitectureUtils.getAbi().equalsIgnoreCase(buildAbi);
 
     }
 

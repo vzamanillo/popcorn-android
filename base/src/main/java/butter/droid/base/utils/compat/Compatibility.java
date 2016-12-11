@@ -1,4 +1,4 @@
-package butter.droid.base.compat;
+package butter.droid.base.utils.compat;
 
 import android.os.Build;
 

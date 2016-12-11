@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import butter.droid.base.compat.Compatibility;
+import butter.droid.base.utils.compat.Compatibility;
 
 public class StorageUtils extends Compatibility {
 

@@ -24,7 +24,7 @@ import android.os.Build;
 
 import java.util.Locale;
 
-import butter.droid.base.compat.Compatibility;
+import butter.droid.base.utils.compat.Compatibility;
 
 public class LocaleUtils extends Compatibility{
 
