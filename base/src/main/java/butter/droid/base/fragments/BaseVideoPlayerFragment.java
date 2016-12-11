@@ -84,7 +84,6 @@ public abstract class BaseVideoPlayerFragment
     implements IVLCVout.Callback,
         TorrentListener,
         MediaPlayer.EventListener,
-        LibVLC.HardwareAccelerationError,
         SubtitleDownloader.ISubtitleDownloaderListener {
 
     @Inject
@@ -192,7 +191,6 @@ public abstract class BaseVideoPlayerFragment
         mMedia = streamInfo.getMedia();
 
         mLibVLC = LibVLC();
-        mLibVLC.setOnHardwareAccelerationError(this);
 
         mMediaPlayer = new MediaPlayer(mLibVLC);
         mMediaPlayer.setEventListener(this);
@@ -710,7 +708,7 @@ public abstract class BaseVideoPlayerFragment
     }
 
     @Override
-    public void eventHardwareAccelerationError() {
+    public void onHardwareAccelerationError(IVLCVout ivlcVout) {
         handleHardwareAccelerationError();
     }
 

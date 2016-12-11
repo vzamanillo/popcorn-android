@@ -43,7 +43,7 @@ public class VLCInstance {
             }
 
             String chroma = PrefUtils.get(context, Prefs.PIXEL_FORMAT, "");
-            sLibVLC = new LibVLC(VLCOptions.getLibOptions(context, true, "UTF-8", true, chroma, BuildConfig.DEBUG));
+            sLibVLC = new LibVLC(context, VLCOptions.getLibOptions(context, true, "UTF-8", true, chroma, BuildConfig.DEBUG));
         }
         return sLibVLC;
     }
@@ -52,7 +52,7 @@ public class VLCInstance {
         if (sLibVLC != null) {
             sLibVLC.release();
             String chroma = PrefUtils.get(context, Prefs.PIXEL_FORMAT, "");
-            sLibVLC = new LibVLC(VLCOptions.getLibOptions(context, true, "UTF-8", true, chroma, BuildConfig.DEBUG));
+            sLibVLC = new LibVLC(context, VLCOptions.getLibOptions(context, true, "UTF-8", true, chroma, BuildConfig.DEBUG));
         }
     }
 
