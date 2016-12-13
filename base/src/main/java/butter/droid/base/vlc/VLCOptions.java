@@ -21,12 +21,9 @@
 package butter.droid.base.vlc;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.videolan.libvlc.Media;
-import org.videolan.libvlc.util.HWDecoderUtil;
 import org.videolan.libvlc.util.VLCUtil;
 
 import java.util.ArrayList;
@@ -36,10 +33,8 @@ import butter.droid.base.utils.PrefUtils;
 
 
 public class VLCOptions {
-    private static final String TAG = "VLCConfig";
 
-    private static final int AOUT_AUDIOTRACK = 0;
-    private static final int AOUT_OPENSLES = 1;
+    private static final String TAG = "VLCConfig";
 
     @SuppressWarnings("unused")
     public static final int HW_ACCELERATION_AUTOMATIC = -1;
@@ -50,52 +45,39 @@ public class VLCOptions {
     public final static int MEDIA_VIDEO = 0x01;
     public final static int MEDIA_NO_HWACCEL = 0x02;
     private final static int MEDIA_PAUSED = 0x4;
-    public final static int MEDIA_FORCE_AUDIO = 0x8;
 
-    public static ArrayList<String> getLibOptions(Context context, boolean timeStreching, String subtitlesEncoding, boolean frameSkip, String chroma, boolean verboseMode) {
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+    public final static int DEFAULT_NETWORK_CACHING = 60000;
+
+    public static ArrayList<String> getLibOptions(Context context, String subtitlesEncoding, String chroma, boolean verboseMode) {
 
         ArrayList<String> options = new ArrayList<>(50);
 
         int deblocking = getDeblocking(-1);
 
-        int networkCaching = pref.getInt("network_caching_value", 0);
-        if (networkCaching > 60000)
-            networkCaching = 60000;
-        else if (networkCaching < 0)
-            networkCaching = 0;
+        int networkCaching = PrefUtils.get(context, Prefs.NETWORK_CACHING, DEFAULT_NETWORK_CACHING);
 
-        /* CPU intensive plugin, setting for slow devices */
-        options.add(timeStreching ? "--audio-time-stretch" : "--no-audio-time-stretch");
+        if (chroma != null && chroma.equals("YV12"))
+            chroma = "";
+
         options.add("--avcodec-skiploopfilter");
         options.add("" + deblocking);
-        options.add("--avcodec-skip-frame");
-        options.add(frameSkip ? "2" : "0");
-        options.add("--avcodec-skip-idct");
-        options.add(frameSkip ? "2" : "0");
         options.add("--subsdec-encoding");
         options.add(subtitlesEncoding);
         options.add("--stats");
+        options.add("--network-caching=" + networkCaching);
         /* XXX: why can't the default be fine ? #7792 */
-        if (networkCaching > 0)
-            options.add("--network-caching=" + networkCaching);
         options.add("--androidwindow-chroma");
-        options.add(chroma != null && chroma.length() > 0 ? chroma : "RV32");
+        options.add(chroma != null ? chroma : "RV32");
+        options.add("--audio-resampler");
+        options.add(getResampler());
 
-        options.add(verboseMode ? "-vvv" : "-vv");
+        options.add(verboseMode ? "-vv" : "-v");
         return options;
     }
 
-    public static String getAout(SharedPreferences pref) {
-        int aout = -1;
-        try {
-            aout = Integer.parseInt(pref.getString("aout", "-1"));
-        } catch (NumberFormatException ignored) {}
-        final HWDecoderUtil.AudioOutput hwaout = HWDecoderUtil.getAudioOutputFromDevice();
-        if (hwaout == HWDecoderUtil.AudioOutput.AUDIOTRACK || hwaout == HWDecoderUtil.AudioOutput.OPENSLES)
-            aout = hwaout == HWDecoderUtil.AudioOutput.OPENSLES ? AOUT_OPENSLES : AOUT_AUDIOTRACK;
-
-        return aout == AOUT_OPENSLES ? "opensles_android" : "android_audiotrack";
+    private static String getResampler() {
+        final VLCUtil.MachineSpecs m = VLCUtil.getMachineSpecs();
+        return (m == null || m.processors > 2) ? "soxr" : "ugly";
     }
 
     private static int getDeblocking(int deblocking) {
