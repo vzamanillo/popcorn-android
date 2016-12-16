@@ -46,7 +46,6 @@ import butter.droid.fragments.VideoPlayerFragment;
 public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPlayerFragment.Callback {
 
     private StreamInfo mStreamInfo;
-    private Media mMedia;
     private VideoPlayerFragment mVideoPlayerFragment;
 
     @Inject
@@ -71,11 +70,11 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
                 .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_videoplayer);
 
-        mMedia = getIntent().getParcelableExtra(DATA);
-        mMedia.title += " " + getString(R.string.trailer);
+        Media media = getIntent().getParcelableExtra(DATA);
+        media.title += " " + getString(R.string.trailer);
         String youTubeUrl = getIntent().getStringExtra(LOCATION);
 
-        mStreamInfo = new StreamInfo(mMedia, null, null, null, null, null);
+        mStreamInfo = new StreamInfo(media, null, null, null, null, null);
 
         mVideoPlayerFragment = (VideoPlayerFragment) getSupportFragmentManager().findFragmentById(R.id.video_fragment);
         mVideoPlayerFragment.enableSubsButton(false);
@@ -125,8 +124,9 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
             String quality = "17";   // 3gpp medium quality, which should be fast enough to view over EDGE connection
             String videoId = params[0];
 
-            if (isCancelled())
+            if (isCancelled()) {
                 return null;
+            }
 
             try {
                 WifiManager wifiManager = (WifiManager) TrailerPlayerActivity.this.getSystemService(Context.WIFI_SERVICE);
@@ -148,15 +148,9 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
                     quality = "18";
                 }
 
-                if (isCancelled())
-                    return null;
-
                 ////////////////////////////////////
                 // calculate the actual URL of the video, encoded with proper YouTube token
                 uriStr = youTubeManager.calculateYouTubeUrl(quality, true, videoId);
-
-                if (isCancelled())
-                    return null;
 
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error occurred while retrieving information from YouTube.", e);
@@ -174,21 +168,24 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
             super.onPostExecute(result);
 
             try {
-                if (isCancelled())
+                if (isCancelled()) {
                     return;
+                }
 
                 if (result == null) {
                     throw new RuntimeException("Invalid NULL Url.");
                 }
 
-                mStreamInfo.setVideoLocation(URLDecoder.decode(result.toString()));
+                mStreamInfo.setVideoLocation(URLDecoder.decode(result.toString(), "UTF-8"));
 
                 mVideoPlayerFragment.onMediaReady();
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error playing video!", e);
 
                 if (!mShowedError) {
-                    showErrorAlert();
+                    if (!isFinishing()) {
+                        showErrorAlert();
+                    }
                 }
             }
         }
@@ -207,8 +204,7 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
                     }
                 });
 
-                AlertDialog lDialog = alertDialogBuilder.create();
-                lDialog.show();
+                alertDialogBuilder.create().show();
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Problem showing error dialog.", e);
             }
